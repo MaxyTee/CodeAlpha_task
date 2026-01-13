@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   LayoutDashboard,
   Package,
@@ -25,12 +25,12 @@ import {
   XCircle,
   ChevronRight,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../Root/DashboardLayout";
 
 const AdminPage = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const navigate = useNavigate();
+  // const [activeTab, setActiveTab] = useState("dashboard");
+  // const navigate = useNavigate();
 
   // Stats Data
   const stats = [
@@ -455,7 +455,6 @@ const AdminPage = () => {
             </div>
           </div>
         </div>
-        )}
       </div>
     </DashboardLayout>
   );

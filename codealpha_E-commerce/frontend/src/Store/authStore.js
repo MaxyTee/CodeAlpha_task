@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API_URL = "http://localhost:4500/api/auth";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const initialState = {
   user: null,
