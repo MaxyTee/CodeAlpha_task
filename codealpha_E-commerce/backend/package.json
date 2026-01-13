@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "build": "vite build",
+    "build": "npm install",
+    "start": "node index.js",
     "seed": "node seed/admin.seed.js",
     "seed_category": "node seed/category.seed.js"
   },
