@@ -22,6 +22,9 @@ app.use("/api/cart", cartRoutes);
 
 const PORT = process.env.PORT || 4500;
 
+app.get("/", (req, res) => {
+  res.send("API is working....");
+});
 const startSever = async () => {
   console.log("Connecting to db");
   try {
