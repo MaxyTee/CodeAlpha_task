@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 
-const API_URL = "http://localhost:4500/api";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const initialState = {
   isLoading: false,
