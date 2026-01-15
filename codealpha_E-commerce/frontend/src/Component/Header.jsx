@@ -180,7 +180,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
 
           {/* User Avatar */}
           <div
-            onClick={() => navigate("/user-page")}
+            onClick={() => navigate("/login")}
             style={{
               width: "32px",
               height: "32px",

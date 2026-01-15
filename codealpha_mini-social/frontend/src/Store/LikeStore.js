@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
-const API_URL = "http://localhost:4000/api/like";
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/like`;
 
 const initialState = {
   isLoading: true,

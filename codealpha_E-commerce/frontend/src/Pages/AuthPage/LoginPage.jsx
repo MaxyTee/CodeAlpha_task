@@ -31,7 +31,7 @@ const LoginPage = () => {
         setIsLoading(false);
       } else {
         await userLogin(payload);
-        navigate("/");
+        navigate("/user-page");
         setIsLoading(false);
       }
     } catch (error) {
