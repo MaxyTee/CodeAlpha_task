@@ -1,252 +1,784 @@
 import React, { useState } from "react";
-import { User, Mail, Lock, Phone, Eye, EyeOff, Loader } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Phone,
+  Calendar,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../Store/authStore";
 
 const SignupPage = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    password: "",
+    confirmPassword: "",
+    newsletter: true,
+    acceptTerms: false,
+  });
+  const { signup } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-  });
-  const [error, setError] = useState("");
-  const location = useLocation();
-
   const navigate = useNavigate();
-  const { signup } = useAuthStore();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
-    setError(""); // Clear error on typing
-  };
-
-  const validateForm = () => {
-    if (!formData.name.trim()) return "Name is required";
-    if (!formData.email.trim()) return "Email is required";
-    if (!formData.password) return "Password is required";
-    if (formData.password.length < 6)
-      return "Password must be at least 6 characters";
-    if (formData.password !== formData.confirmPassword)
-      return "Passwords do not match";
-    return "";
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (!formData.acceptTerms) {
+      alert("Please accept the terms and conditions");
       return;
     }
 
     setIsLoading(true);
-    setError("");
-
+    const payload = {
+      ...formData,
+      name: formData.firstName + formData.lastName,
+    };
+    console.log(payload);
     try {
-      // Remove confirmPassword before sending to API
-      const { confirmPassword, ...signupData } = formData;
-      console.log(confirmPassword);
-
-      const res = await signup(signupData);
-
-      if (res.success) {
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      setError("Signup failed. Please try again.");
-    } finally {
+      // console.log("Signup data:", formData);
+      await signup(payload);
       setIsLoading(false);
+    } catch (error) {
+      console.log("Error", error);
     }
   };
 
+  const containerStyle = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundImage:
+      'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1600&auto=format&fit=crop")',
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    padding: "20px",
+  };
+
+  const signupBoxStyle = {
+    backgroundColor: "rgba(252, 251, 248, 0.95)",
+    borderRadius: "12px",
+    padding: "48px",
+    width: "100%",
+    maxWidth: "500px",
+    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+    border: "1px solid rgba(166, 144, 89, 0.2)",
+    overflowY: "auto",
+    maxHeight: "90vh",
+  };
+
+  const inputContainerStyle = {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "8px",
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "14px 16px 14px 48px",
+    border: "1px solid rgba(166, 144, 89, 0.3)",
+    borderRadius: "8px",
+    fontSize: "0.95rem",
+    backgroundColor: "white",
+    transition: "all 0.2s ease",
+  };
+
   return (
-    <div className="min-h-screen flex">
-      {/* Left - Image */}
-      <div className="hidden lg:block lg:w-1/2">
-        <img
-          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80"
-          alt="Signup"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Right - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Create Account
+    <div style={containerStyle}>
+      <div style={signupBoxStyle}>
+        {/* Brand Logo */}
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              marginBottom: "12px",
+            }}
+          >
+            <Sparkles size={28} color="#a69059" />
+            <h1
+              style={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                letterSpacing: "0.3em",
+                color: "#161513",
+              }}
+            >
+              LUXE
             </h1>
-            <p className="text-gray-600">Join our community</p>
           </div>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "#7c786e",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              marginBottom: "4px",
+            }}
+          >
+            Join Our Exclusive Circle
+          </p>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "#a69059",
+              fontStyle: "italic",
+            }}
+          >
+            Create your account for personalized service
+          </p>
+        </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
+        {/* Signup Form */}
+        <form onSubmit={handleSubmit}>
+          {/* Name Fields */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+              marginBottom: "20px",
+            }}
+          >
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  color: "#161513",
+                  marginBottom: "6px",
+                }}
+              >
+                First Name *
               </label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 w-5 h-5 text-amber-500" />
+              <div style={inputContainerStyle}>
+                <User
+                  size={18}
+                  style={{
+                    position: "absolute",
+                    left: "16px",
+                    color: "#a69059",
+                    opacity: 0.6,
+                  }}
+                />
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="firstName"
+                  value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Enter your name"
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  placeholder="John"
                   required
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                  }
                 />
               </div>
             </div>
 
-            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  color: "#161513",
+                  marginBottom: "6px",
+                }}
+              >
+                Last Name *
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 w-5 h-5 text-amber-500" />
+              <div style={inputContainerStyle}>
+                <User
+                  size={18}
+                  style={{
+                    position: "absolute",
+                    left: "16px",
+                    color: "#a69059",
+                    opacity: 0.6,
+                  }}
+                />
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Enter your email"
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  placeholder="Doe"
                   required
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                  }
                 />
               </div>
             </div>
+          </div>
 
-            {/* Phone (Optional) */}
+          {/* Email */}
+          <div style={{ marginBottom: "20px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                color: "#161513",
+                marginBottom: "6px",
+              }}
+            >
+              Email Address *
+            </label>
+            <div style={inputContainerStyle}>
+              <Mail
+                size={18}
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  color: "#a69059",
+                  opacity: 0.6,
+                }}
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                required
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                }
+              />
+            </div>
+          </div>
+
+          {/* Phone & Birth Date */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+              marginBottom: "20px",
+            }}
+          >
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone (Optional)
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  color: "#161513",
+                  marginBottom: "6px",
+                }}
+              >
+                Phone Number
               </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 w-5 h-5 text-amber-500" />
+              <div style={inputContainerStyle}>
+                <Phone
+                  size={18}
+                  style={{
+                    position: "absolute",
+                    left: "16px",
+                    color: "#a69059",
+                    opacity: 0.6,
+                  }}
+                />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Enter your phone number"
-                  className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  placeholder="(123) 456-7890"
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                  }
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-amber-500" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Create a password (min. 6 characters)"
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-amber-500" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader className="w-5 h-5 animate-spin" />
-                  Creating Account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </button>
-          </form>
-
-          {/* Login Link */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <Link
-                state={{ from: location?.state?.from }}
-                to="/login"
-                className="text-amber-600 font-medium hover:text-amber-700 hover:underline"
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  color: "#161513",
+                  marginBottom: "6px",
+                }}
               >
-                Sign in here
-              </Link>
+                Birth Date
+              </label>
+              <div style={inputContainerStyle}>
+                <Calendar
+                  size={18}
+                  style={{
+                    position: "absolute",
+                    left: "16px",
+                    color: "#a69059",
+                    opacity: 0.6,
+                  }}
+                />
+                <input
+                  type="date"
+                  name="birthDate"
+                  value={formData.birthDate}
+                  onChange={handleChange}
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                  }
+                />
+              </div>
+              <p
+                style={{ fontSize: "0.7rem", color: "#999", marginTop: "4px" }}
+              >
+                For personalized birthday offers
+              </p>
+            </div>
+          </div>
+
+          {/* Password */}
+          <div style={{ marginBottom: "20px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                color: "#161513",
+                marginBottom: "6px",
+              }}
+            >
+              Password *
+            </label>
+            <div style={inputContainerStyle}>
+              <Lock
+                size={18}
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  color: "#a69059",
+                  opacity: 0.6,
+                }}
+              />
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+                minLength="8"
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "16px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#a69059",
+                  opacity: 0.6,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <p style={{ fontSize: "0.7rem", color: "#999", marginTop: "4px" }}>
+              Minimum 8 characters with letters and numbers
             </p>
           </div>
+
+          {/* Confirm Password */}
+          <div style={{ marginBottom: "24px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                color: "#161513",
+                marginBottom: "6px",
+              }}
+            >
+              Confirm Password *
+            </label>
+            <div style={inputContainerStyle}>
+              <Lock
+                size={18}
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  color: "#a69059",
+                  opacity: 0.6,
+                }}
+              />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "16px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#a69059",
+                  opacity: 0.6,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Checkboxes */}
+          <div style={{ marginBottom: "32px" }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "12px",
+                cursor: "pointer",
+                fontSize: "0.8rem",
+                color: "#666",
+                marginBottom: "16px",
+              }}
+            >
+              <input
+                type="checkbox"
+                name="newsletter"
+                checked={formData.newsletter}
+                onChange={handleChange}
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  accentColor: "#a69059",
+                  marginTop: "2px",
+                  flexShrink: 0,
+                }}
+              />
+              <span>
+                Yes, I'd like to receive exclusive offers, style tips, and early
+                access to new collections via email.
+              </span>
+            </label>
+
+            <label
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "12px",
+                cursor: "pointer",
+                fontSize: "0.8rem",
+                color: "#666",
+              }}
+            >
+              <input
+                type="checkbox"
+                name="acceptTerms"
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                required
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  accentColor: "#a69059",
+                  marginTop: "2px",
+                  flexShrink: 0,
+                }}
+              />
+              <span>
+                I agree to the{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/terms")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#a69059",
+                    cursor: "pointer",
+                    fontSize: "0.8rem",
+                    padding: 0,
+                    textDecoration: "underline",
+                  }}
+                >
+                  Terms of Service
+                </button>{" "}
+                and{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/privacy")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#a69059",
+                    cursor: "pointer",
+                    fontSize: "0.8rem",
+                    padding: 0,
+                    textDecoration: "underline",
+                  }}
+                >
+                  Privacy Policy
+                </button>
+                . *
+              </span>
+            </label>
+          </div>
+
+          {/* Sign Up Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: "100%",
+              backgroundColor: "#a69059",
+              color: "white",
+              border: "none",
+              padding: "16px",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: 600,
+              cursor: isLoading ? "not-allowed" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              transition: "all 0.2s ease",
+              opacity: isLoading ? 0.7 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading)
+                e.target.style.backgroundColor = "rgba(166, 144, 89, 0.9)";
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) e.target.style.backgroundColor = "#a69059";
+            }}
+          >
+            {isLoading ? (
+              <>
+                <div
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    border: "2px solid white",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            margin: "32px 0",
+            color: "#999",
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              height: "1px",
+              backgroundColor: "rgba(166, 144, 89, 0.2)",
+            }}
+          ></div>
+          <span style={{ padding: "0 16px", fontSize: "0.875rem" }}>or</span>
+          <div
+            style={{
+              flex: 1,
+              height: "1px",
+              backgroundColor: "rgba(166, 144, 89, 0.2)",
+            }}
+          ></div>
+        </div>
+
+        {/* Social Signup */}
+        <div style={{ marginBottom: "24px" }}>
+          <button
+            type="button"
+            onClick={() => console.log("Google signup")}
+            style={{
+              width: "100%",
+              backgroundColor: "white",
+              color: "#161513",
+              border: "1px solid rgba(166, 144, 89, 0.3)",
+              padding: "14px",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.borderColor = "#a69059";
+              e.target.style.backgroundColor = "rgba(166, 144, 89, 0.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.borderColor = "rgba(166, 144, 89, 0.3)";
+              e.target.style.backgroundColor = "white";
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            Sign up with Google
+          </button>
+        </div>
+
+        {/* Login Link */}
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{ fontSize: "0.875rem", color: "#666", marginBottom: "8px" }}
+          >
+            Already have an account?
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "0.875rem",
+              color: "#a69059",
+              cursor: "pointer",
+              fontWeight: 600,
+              textDecoration: "underline",
+              padding: 0,
+            }}
+          >
+            Sign in to your account
+          </button>
+        </div>
+
+        {/* Benefits */}
+        <div
+          style={{
+            marginTop: "32px",
+            paddingTop: "24px",
+            borderTop: "1px solid rgba(166, 144, 89, 0.1)",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              color: "#a69059",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              marginBottom: "12px",
+            }}
+          >
+            Benefits of joining LUXE:
+          </p>
+          <ul
+            style={{
+              fontSize: "0.75rem",
+              color: "#666",
+              paddingLeft: "20px",
+              lineHeight: 1.6,
+            }}
+          >
+            <li>Exclusive member-only offers</li>
+            <li>Early access to new collections</li>
+            <li>Personalized style recommendations</li>
+            <li>Free shipping on all orders</li>
+            <li>Birthday surprise gift</li>
+            <li>Priority customer service</li>
+          </ul>
         </div>
       </div>
+
+      {/* Add CSS animation */}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };

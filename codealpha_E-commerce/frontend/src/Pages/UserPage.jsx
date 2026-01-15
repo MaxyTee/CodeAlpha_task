@@ -21,7 +21,7 @@ import {
 
 import OrderListPage from "./OrderListPage";
 import { useAuthStore } from "../Store/authStore";
-import NewAddressModal from "../Component/NewAddressModel";
+// import NewAddressModal from "../Component/NewAddressModel";
 import { useOrderStore } from "../Store/OrderStore";
 
 const UserPage = () => {

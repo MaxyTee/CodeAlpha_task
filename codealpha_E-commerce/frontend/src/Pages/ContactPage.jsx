@@ -1,40 +1,21 @@
 import React, { useState } from "react";
-import {
-  ShoppingCart,
-  Heart,
-  User,
-  Search,
-  Menu,
-  X,
-  Phone,
-  Mail,
-  Send,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  ChevronDown,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
 
-// Contact Page Component
-function ContactPage() {
+const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
     message: "",
   });
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.email || !formData.phone) {
-      alert("Please fill in all required fields");
-      return;
-    }
-    console.log("Form submitted:", formData);
-    alert("Message sent successfully!");
-    setFormData({ name: "", email: "", phone: "", message: "" });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission
+    console.log(formData);
+    alert("Thank you for your message. We'll get back to you soon.");
+    setFormData({ name: "", email: "", message: "" });
   };
 
   const handleChange = (e) => {
@@ -45,118 +26,180 @@ function ContactPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-16">
-        <a href="#" className="hover:text-black">
-          Home
-        </a>
-        <span>/</span>
-        <span className="text-black">Contact</span>
-      </div>
+    <div className="min-h-screen bg-white">
+      <Header />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Side - Contact Info */}
-        <div className="lg:col-span-1 space-y-8">
-          {/* Call To Us */}
-          <div className="bg-white shadow-md p-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                <Phone size={20} className="text-white" />
-              </div>
-              <h3 className="font-semibold">Call To Us</h3>
-            </div>
-            <div className="space-y-4 text-sm">
-              <p>We are available 24/7, 7 days a week.</p>
-              <p>Phone: +8801611112222</p>
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-300"></div>
-
-          {/* Write To Us */}
-          <div className="bg-white shadow-md p-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                <Mail size={20} className="text-white" />
-              </div>
-              <h3 className="font-semibold">Write To US</h3>
-            </div>
-            <div className="space-y-4 text-sm">
-              <p>Fill out our form and we will contact you within 24 hours.</p>
-              <p>Emails: customer@exclusive.com</p>
-              <p>Emails: support@exclusive.com</p>
-            </div>
-          </div>
+      <div className="max-w-6xl mx-auto px-4 pt-24 pb-16">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-light text-gray-900 mb-4">Contact Us</h1>
+          <p className="text-gray-600">
+            Get in touch with any questions or inquiries
+          </p>
         </div>
 
-        {/* Right Side - Contact Form */}
-        <div className="lg:col-span-2">
-          <div className="bg-white shadow-md p-8">
-            <div className="space-y-6">
-              {/* Name, Email, Phone Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* Contact Form */}
+          <div>
+            <h2 className="text-2xl font-light text-gray-900 mb-6">
+              Send a Message
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Name</label>
                 <input
                   type="text"
                   name="name"
-                  placeholder="Your Name *"
                   value={formData.name}
                   onChange={handleChange}
-                  className="px-4 py-3 bg-gray-100 outline-none"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email *"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="px-4 py-3 bg-gray-100 outline-none"
-                />
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Your Phone *"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="px-4 py-3 bg-gray-100 outline-none"
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none"
+                  placeholder="Your name"
                 />
               </div>
 
-              {/* Message Textarea */}
-              <textarea
-                name="message"
-                placeholder="Your Message"
-                value={formData.message}
-                onChange={handleChange}
-                rows="10"
-                className="w-full px-4 py-3 bg-gray-100 outline-none resize-none"
-              ></textarea>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none"
+                  placeholder="your@email.com"
+                />
+              </div>
 
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  onClick={handleSubmit}
-                  className="bg-red-500 text-white px-12 py-4 hover:bg-red-600 transition font-medium"
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows={5}
+                  className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none resize-none"
+                  placeholder="Your message..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-2 bg-black text-white px-6 py-3 hover:bg-gray-800 transition-colors"
+              >
+                <Send size={18} />
+                Send Message
+              </button>
+            </form>
+          </div>
+
+          {/* Contact Information */}
+          <div>
+            <h2 className="text-2xl font-light text-gray-900 mb-6">
+              Get in Touch
+            </h2>
+
+            <div className="space-y-8">
+              {/* Contact Methods */}
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-gray-100">
+                    <Mail size={20} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Email</h3>
+                    <p className="text-gray-600">hello@luxe.com</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      We'll respond within 24 hours
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-gray-100">
+                    <Phone size={20} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Phone</h3>
+                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Mon-Fri, 9am-6pm EST
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-gray-100">
+                    <MapPin size={20} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">Location</h3>
+                    <p className="text-gray-600">
+                      123 Jewelry Street
+                      <br />
+                      New York, NY 10001
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      By appointment only
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Store Image */}
+              <div className="pt-6 border-t border-gray-200">
+                <div className="aspect-video overflow-hidden bg-gray-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&auto=format&fit=crop"
+                    alt="Luxe store"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* FAQ Preview */}
+              <div className="pt-6 border-t border-gray-200">
+                <h3 className="font-medium text-gray-900 mb-3">
+                  Common Questions
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-900">
+                      How long does shipping take?
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      2-5 business days within the US
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-900">
+                      Do you offer custom designs?
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Yes, please email us for custom inquiries
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href="/faq"
+                  className="inline-block text-sm text-gray-600 hover:text-gray-900 mt-3"
                 >
-                  Send Message
-                </button>
+                  View all FAQs →
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// Main App Component
-export default function ContactPageApp() {
-  return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <ContactPage />
       <Footer />
     </div>
   );
-}
+};
+
+export default ContactPage;

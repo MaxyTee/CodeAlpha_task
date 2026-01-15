@@ -13,7 +13,10 @@ const initialState = {
 export const useCartStore = create((set, get) => ({
   ...initialState,
 
-  getCart: async (user) => {
+  getCart: async (user, force = false) => {
+    const { cart } = get();
+
+    if (cart.length > 0 && !force) return;
     set({ isLoading: true, error: null });
     try {
       const { data } = await axios.get(`${API_URL}/cart/get-cart/${user}`);
@@ -45,11 +48,12 @@ export const useCartStore = create((set, get) => ({
         set({ isLoading: false, error: data.message });
       }
 
-      const { getCart } = get();
+      const { getCart, cart } = get();
 
-      await getCart(payload.user);
+      await getCart(payload.user, true);
+      console.log("Store cart", cart);
 
-      set({ isLoading: false, error: null });
+      set({ isLoading: false, error: null, cart: data.cart.items });
       toast.success(data.message);
     } catch (error) {
       console.log("Error", error);
@@ -96,12 +100,14 @@ export const useCartStore = create((set, get) => ({
         return { success: false };
       }
 
-      console.log(payload.product);
-
       const { getCart, cart } = get();
-      await getCart(payload.user);
+      await getCart(payload.user, true);
 
-      const newData = cart.find((item) => item.product._id === payload.product);
+      const newData = cart.map((item) => {
+        const update = { ...item };
+
+        return update;
+      });
       console.log(newData);
 
       set({ isLoading: false, error: null });
@@ -128,9 +134,9 @@ export const useCartStore = create((set, get) => ({
       }
 
       const { getCart } = get();
-      getCart(payload.user);
+      getCart(payload.user, true);
 
-      set({ isLoading: false, error: null, cart: data.cart });
+      set({ isLoading: false, error: null, cart: data.cart.items });
       toast.success(data.message);
 
       return { success: true };

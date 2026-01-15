@@ -84,6 +84,7 @@ const AddProductPage = () => {
     const files = Array.from(e.target.files);
     const newImages = files.map((file) => ({
       id: Date.now() + Math.random(),
+      file,
       url: URL.createObjectURL(file),
       name: file.name,
       size: file.size,
@@ -100,9 +101,9 @@ const AddProductPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log("Hello");
 
     try {
-      // Prepare final product data
       const finalProduct = {
         ...productData,
         price: parseFloat(productData.price),
@@ -113,11 +114,10 @@ const AddProductPage = () => {
         reviewsCount: parseInt(productData.reviewsCount) || 0,
         stock: parseInt(productData.stock) || 0,
         sizes: productData.sizes.filter((size) => size.trim() !== ""),
-        image: images.map((img) => img.url),
         isFeatured: productData.isFeatured,
+        isActive: productData.isActive,
       };
 
-      // Remove empty fields
       Object.keys(finalProduct).forEach((key) => {
         if (finalProduct[key] === "" || finalProduct[key] === undefined) {
           delete finalProduct[key];
@@ -126,17 +126,34 @@ const AddProductPage = () => {
 
       console.log("Submitting product:", finalProduct);
 
-      const payload = { ...finalProduct };
-      console.log("Payload", payload);
+      const formData = new FormData();
 
-      // Simulate API call
+      Object.keys(finalProduct).forEach((key) => {
+        if (Array.isArray(finalProduct[key])) {
+          finalProduct[key].forEach((item) =>
+            formData.append(`${key}[]`, item)
+          );
+        } else {
+          formData.append(key, finalProduct[key]);
+        }
+      });
+
+      images.forEach((img) => {
+        formData.append("image", img.file);
+        console.log(img);
+      });
+
+      let response;
+
       if (location?.state) {
-        const payload = { update: { ...finalProduct } };
-        console.log(payload);
-        return await updateProduct(payload);
+        response = await updateProduct(formData);
+      } else {
+        response = await createProduct(formData);
       }
-      const response = await createProduct(payload);
-      if (!response.success) return;
+
+      if (!response?.success) return;
+
+      // Reset form
       setProductData({
         name: "",
         description: "",
@@ -151,8 +168,7 @@ const AddProductPage = () => {
         isActive: true,
       });
 
-      // Success - redirect to products page
-      //   navigate("/admin/products");
+      console.log("Product submitted successfully!");
     } catch (error) {
       console.error("Error adding product:", error);
     } finally {

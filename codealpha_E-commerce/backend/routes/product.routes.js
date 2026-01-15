@@ -17,11 +17,19 @@ import {
 } from "../controllers/product.controller.js";
 import { handleInputValidation } from "../middleware/handleInputValidation.js";
 import { body, param } from "express-validator";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 router.post(
   "/create-product",
+  upload.array("image", 5),
+
+  (req, res, next) => {
+    console.log("req.files:", req.files);
+    next();
+  },
+
   [body("name").trim().notEmpty().withMessage("Name is required")],
   [
     body("description")
@@ -29,7 +37,7 @@ router.post(
       .notEmpty()
       .withMessage("Description is required"),
   ],
-  [body("image").trim().notEmpty().withMessage("Image is required")],
+
   [body("price").trim().notEmpty().withMessage("Price is required")],
   [body("category").trim().notEmpty().withMessage("Category is required")],
   [body("sizes").trim().notEmpty().withMessage("Sizes is required")],

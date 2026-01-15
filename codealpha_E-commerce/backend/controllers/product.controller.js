@@ -1,12 +1,12 @@
 import express from "express";
 import slugify from "slugify";
 import { Product } from "../models/product.model.js";
+import cloudinary from "../cloudinary/cloudinary.config.js";
 
 export const createProduct = async (req, res) => {
   const {
     name,
     description,
-    image,
     category,
     price,
     sizes,
@@ -16,13 +16,29 @@ export const createProduct = async (req, res) => {
     reviewsCount,
     isFeatured,
   } = req.body;
-  console.log(req.body);
+
+  console.log("Files received:", req.files); // DEBUG
+
   try {
     const existingProduct = await Product.findOne({ name });
     if (existingProduct) {
       return res
         .status(400)
-        .json({ success: false, message: "Product already exist" });
+        .json({ success: false, message: "Product already exists" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Image is required" });
+    }
+
+    const imageUrls = [];
+    for (const file of req.files) {
+      const result = await cloudinary.uploader.upload(
+        `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+      );
+      imageUrls.push(result.secure_url);
     }
 
     const slug = slugify(name, { lower: true });
@@ -30,7 +46,7 @@ export const createProduct = async (req, res) => {
     const product = await Product.create({
       name,
       description,
-      image,
+      image: imageUrls,
       price,
       category,
       sizes,
@@ -48,8 +64,8 @@ export const createProduct = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log("error", error.message);
-    return res.status(500).json({ success: false, message: "Sever error" });
+    console.error("Error creating product:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

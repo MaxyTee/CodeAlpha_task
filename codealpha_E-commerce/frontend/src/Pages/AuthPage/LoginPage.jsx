@@ -1,288 +1,517 @@
 import React, { useState } from "react";
-import { Mail, Lock, Eye, EyeOff, Loader, ShoppingBag } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, Sparkles, Shield, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../Store/authStore";
 
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const { userLogin, admiLogin } = useAuthStore();
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
   const navigate = useNavigate();
-  const { userLogin } = useAuthStore();
-  const location = useLocation();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  // Validate form
-  const validateForm = () => {
-    const newErrors = {};
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    return newErrors;
-  };
-
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      // //   console.log("User login attempt:", formData);
-      const payload = formData;
+      const payload = {
+        email,
+        password,
+        rememberMe,
+        type: isAdminLogin ? "admin" : "client",
+      };
 
-      const response = await userLogin(payload);
-      if (response.success) {
-        location?.state?.from
-          ? navigate(`${location?.state?.from}`)
-          : navigate("/user-page");
+      if (isAdminLogin) {
+        await admiLogin(payload);
+        navigate("/admin/dashboard");
+        setIsLoading(false);
+      } else {
+        await userLogin(payload);
+        navigate("/");
+        setIsLoading(false);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setErrors({ submit: "Invalid email or password. Please try again." });
-    } finally {
-      setIsLoading(false);
+      console.log("Error", error);
     }
   };
 
-  // Demo user login (for testing)
-  const handleDemoLogin = () => {
-    setFormData({
-      email: "demo@example.com",
-      password: "demo123",
-      rememberMe: true,
-    });
+  const containerStyle = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundImage:
+      'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1600&auto=format&fit=crop")',
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    padding: "20px",
+  };
+
+  const loginBoxStyle = {
+    backgroundColor: "rgba(252, 251, 248, 0.95)",
+    borderRadius: "12px",
+    padding: "48px",
+    width: "100%",
+    maxWidth: "440px",
+    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+    border: "1px solid rgba(166, 144, 89, 0.2)",
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left - Image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-900/20 to-transparent"></div>
-        <img
-          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80"
-          alt="Welcome to our store"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute bottom-10 left-10 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <ShoppingBag className="w-8 h-8" />
-            <h2 className="text-2xl font-bold">Welcome to ShopEase</h2>
+    <div style={containerStyle}>
+      <div style={loginBoxStyle}>
+        {/* Brand Logo */}
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              marginBottom: "16px",
+            }}
+          >
+            <Sparkles size={28} color="#a69059" />
+            <h1
+              style={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                letterSpacing: "0.3em",
+                color: "#161513",
+              }}
+            >
+              LUXE
+            </h1>
           </div>
-          <p className="text-lg opacity-90">
-            Your favorite shopping destination
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "#7c786e",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              marginBottom: "8px",
+            }}
+          >
+            {isAdminLogin ? "Admin Portal" : "Client Portal"}
+          </p>
+
+          {/* Login Type Toggle */}
+          <div
+            style={{
+              display: "flex",
+              backgroundColor: "rgba(166, 144, 89, 0.1)",
+              borderRadius: "8px",
+              padding: "4px",
+              width: "fit-content",
+              margin: "0 auto",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsAdminLogin(false)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: "6px",
+                border: "none",
+                backgroundColor: !isAdminLogin ? "#a69059" : "transparent",
+                color: !isAdminLogin ? "white" : "#666",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <Users size={14} />
+              Client
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsAdminLogin(true)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: "6px",
+                border: "none",
+                backgroundColor: isAdminLogin ? "#a69059" : "transparent",
+                color: isAdminLogin ? "white" : "#666",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <Shield size={14} />
+              Admin
+            </button>
+          </div>
+        </div>
+
+        {/* Admin Notice */}
+        {isAdminLogin && (
+          <div
+            style={{
+              backgroundColor: "rgba(166, 144, 89, 0.1)",
+              border: "1px solid rgba(166, 144, 89, 0.3)",
+              borderRadius: "8px",
+              padding: "12px 16px",
+              marginBottom: "24px",
+              fontSize: "0.75rem",
+              color: "#666",
+              textAlign: "center",
+            }}
+          >
+            <Shield
+              size={14}
+              style={{
+                marginBottom: "4px",
+                display: "block",
+                margin: "0 auto 4px",
+              }}
+            />
+            <strong>Admin Access Only</strong>
+            <div style={{ fontSize: "0.7rem", marginTop: "2px" }}>
+              Restricted to authorized personnel only
+            </div>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: "24px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#161513",
+                marginBottom: "8px",
+              }}
+            >
+              {isAdminLogin ? "Admin Email" : "Email Address"}
+            </label>
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Mail
+                size={20}
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  color: "#a69059",
+                  opacity: 0.6,
+                }}
+              />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={isAdminLogin ? "admin@luxe.com" : "your@email.com"}
+                required
+                style={{
+                  width: "100%",
+                  padding: "14px 16px 14px 48px",
+                  border: "1px solid rgba(166, 144, 89, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  backgroundColor: "white",
+                  transition: "all 0.2s ease",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                }
+              />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "24px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px",
+              }}
+            >
+              <label
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  color: "#161513",
+                }}
+              >
+                Password
+              </label>
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: "0.75rem",
+                  color: "#a69059",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  padding: 0,
+                }}
+              >
+                Forgot password?
+              </button>
+            </div>
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Lock
+                size={20}
+                style={{
+                  position: "absolute",
+                  left: "16px",
+                  color: "#a69059",
+                  opacity: 0.6,
+                }}
+              />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                style={{
+                  width: "100%",
+                  padding: "14px 48px 14px 48px",
+                  border: "1px solid rgba(166, 144, 89, 0.3)",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  backgroundColor: "white",
+                  transition: "all 0.2s ease",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#a69059")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(166, 144, 89, 0.3)")
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "16px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#a69059",
+                  opacity: 0.6,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "32px" }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                color: "#666",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  accentColor: "#a69059",
+                }}
+              />
+              Remember me
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: "100%",
+              backgroundColor: isAdminLogin ? "#1f1f1f" : "#a69059",
+              color: "white",
+              border: "none",
+              padding: "16px",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: 600,
+              cursor: isLoading ? "not-allowed" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              transition: "all 0.2s ease",
+              opacity: isLoading ? 0.7 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading)
+                e.target.style.backgroundColor = isAdminLogin
+                  ? "rgba(31, 31, 31, 0.9)"
+                  : "rgba(166, 144, 89, 0.9)";
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading)
+                e.target.style.backgroundColor = isAdminLogin
+                  ? "#1f1f1f"
+                  : "#a69059";
+            }}
+          >
+            {isLoading ? (
+              <>
+                <div
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    border: "2px solid white",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+                {isAdminLogin ? "Admin Sign In..." : "Signing In..."}
+              </>
+            ) : isAdminLogin ? (
+              "Admin Sign In"
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </form>
+
+        {/* Sign Up Link - Only show for client login */}
+        {!isAdminLogin && (
+          <div className="flex mt-6 items-center gap-1 justify-center">
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "#666",
+                marginBottom: "8px",
+              }}
+            >
+              Don't have an account?
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/signup")}
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "0.875rem",
+                color: "#a69059",
+                cursor: "pointer",
+                fontWeight: 600,
+                textDecoration: "underline",
+                padding: 0,
+              }}
+            >
+              Create your LUXE account
+            </button>
+          </div>
+        )}
+
+        {/* Admin Info - Only show for admin login */}
+        {isAdminLogin && (
+          <div style={{ marginTop: "24px", textAlign: "center" }}>
+            <p style={{ fontSize: "0.75rem", color: "#999" }}>
+              <strong>Default Admin Credentials:</strong>
+              <br />
+              Email: admin@luxe.com
+              <br />
+              Password: admin123
+            </p>
+          </div>
+        )}
+
+        {/* Terms */}
+        <div
+          style={{
+            marginTop: "32px",
+            paddingTop: "16px",
+            borderTop: "1px solid rgba(166, 144, 89, 0.1)",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "0.75rem",
+              color: "#999",
+              lineHeight: 1.5,
+            }}
+          >
+            By signing in, you agree to our{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/terms")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#a69059",
+                cursor: "pointer",
+                fontSize: "0.75rem",
+                padding: 0,
+                textDecoration: "underline",
+              }}
+            >
+              Terms of Service
+            </button>{" "}
+            and{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/privacy")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#a69059",
+                cursor: "pointer",
+                fontSize: "0.75rem",
+                padding: 0,
+                textDecoration: "underline",
+              }}
+            >
+              Privacy Policy
+            </button>
           </p>
         </div>
       </div>
 
-      {/* Right - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-to-b from-amber-50/20 to-white">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
-                <ShoppingBag className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-gray-600">Sign in to your account</p>
-          </div>
-
-          {/* Error Message */}
-          {errors.submit && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm font-medium">
-                {errors.submit}
-              </p>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail
-                  className={`absolute left-3 top-3 w-5 h-5 ${
-                    errors.email ? "text-red-500" : "text-amber-500"
-                  }`}
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
-                    errors.email
-                      ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-                      : "border-gray-300 focus:border-amber-400 focus:ring-amber-100"
-                  }`}
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Password Input */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-amber-600 hover:text-amber-700 font-medium"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock
-                  className={`absolute left-3 top-3 w-5 h-5 ${
-                    errors.password ? "text-red-500" : "text-amber-500"
-                  }`}
-                />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  className={`w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
-                    errors.password
-                      ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-                      : "border-gray-300 focus:border-amber-400 focus:ring-amber-100"
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-amber-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-                className="w-4 h-4 text-amber-600 rounded focus:ring-amber-500"
-              />
-              <label className="ml-2 text-sm text-gray-600">
-                Remember me on this device
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold rounded-lg hover:from-amber-700 hover:to-amber-800 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <Loader className="w-5 h-5 animate-spin" />
-                  Signing In...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-
-            {/* Demo Button (for testing) */}
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              className="w-full py-2.5 text-sm border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors"
-            >
-              Use Demo Account
-            </button>
-          </form>
-
-          {/* Sign Up Link */}
-          <div className="text-center pt-6 border-t border-gray-200">
-            <p className="text-gray-600">
-              Don't have an account?{" "}
-              <Link
-                state={{ from: location?.state?.from }}
-                to="/signup"
-                className="text-amber-600 hover:text-amber-700 font-semibold"
-              >
-                Sign up now
-              </Link>
-            </p>
-            <p className="text-gray-600">
-              <Link
-                to="/admin-login"
-                className="text-amber-600 hover:text-amber-700 font-semibold"
-              >
-                Admin
-              </Link>
-            </p>
-            <p className="text-xs text-gray-500 mt-4">
-              By signing in, you agree to our Terms of Service and Privacy
-              Policy
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Add CSS animation */}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };

@@ -16,12 +16,14 @@ import AdminLogin from "./Pages/AuthPage/AdminLoginPage";
 import UserPage from "./Pages/UserPage";
 import CartPage from "./Pages/CartPage";
 import AdminPage from "./Pages/AdminPage";
-import AddProductPage from "./Pages/CreateProductPage";
+
 import ProductPage from "./Pages/AdminPages/ProductPage";
 import OrderPage from "./Pages/AdminPages/OrderPage";
 import SettingPage from "./Pages/AdminPages/SettingPage";
 import SingleProductPage from "./Pages/SingleProductPage";
 import OrderListPage from "./Pages/OrderListPage";
+import AdminDashboard from "./Pages/AuthPage/AdminDashboard";
+import ProductsPage from "./Pages/AllProductPage";
 
 function App() {
   const Router = createBrowserRouter(
@@ -34,14 +36,15 @@ function App() {
         <Route path="admin-login" element={<AdminLogin />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="user-page" element={<UserPage />} />
-        <Route path="admin/dashboard" element={<AdminPage />} />
         <Route path="cart" element={<CartPage />} />
+        <Route path="allProductPage" element={<ProductsPage />} />
         <Route
           path="single-product-page/:slug"
           element={<SingleProductPage />}
         />
-        <Route path="create-product-page" element={<AddProductPage />} />
+
         <Route path="order-list-page" element={<OrderListPage />} />
+        <Route path="admin/dashboard" element={<AdminDashboard />} />
         <Route path="admin/products" element={<ProductPage />} />
         <Route path="admin/orders" element={<OrderPage />} />
         <Route path="admin/settings" element={<SettingPage />} />

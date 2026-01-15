@@ -1,99 +1,170 @@
 import React from "react";
-import {
-  Smartphone,
-  Home,
-  Shirt,
-  CookingPot,
-  Dumbbell,
-  Book,
-} from "lucide-react";
-import { Link } from "react-router-dom";
 
-const CategorySection = () => {
+const Categories = () => {
   const categories = [
     {
-      name: "Electronics",
-      icon: <Smartphone className="w-8 h-8" />,
-      items: 1250,
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
+      name: "Rings",
+      subtitle: "Diamond Bands",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBt9OB2He0tOsS0-IiiqwCG6mAm1l1WYZ4dQz5ETQ0v1fX8uXLJ3A724YZMpmqagQGjLg6aFR0PFEn6nyV3Up6WducABD-7B2MJ3HyHMyFML_xoFNP6h3GGuWo-pfrZh1NAuYoKn5usYLZqbau6-oK54jFo1OeXg2ixcj-RTiHPxqNXkZOd2XgBhSdwPsIHyoXgnyoRpKmIHs5NIrzzi8MQDbpxWwU9OKykwxWS9hdAcPULBtS29S2OdEetuNVr1t50C4bYhbRn3qxt",
+      alt: "Close-up of a luxury diamond wedding band",
     },
     {
-      name: "Home & Living",
-      icon: <Home className="w-8 h-8" />,
-      items: 890,
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
+      name: "Necklaces",
+      subtitle: "Gold Pendants",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuAZR_I6q4si0f2myHuwfDCFHTO31kCaB0aKkV9M9AknCLW1kj6N1tvd4EcWh8lQlwV1UBWgnMftATtOQF_VYp63XDIspI3JIXfmqkhB5flcqi-PYlN7s2R04dDXEHG8eswL4HpM_VH661NzPNJ0wdheqEqk015W3ZztG2O8-J90yxRFnuR_a5KVObip4rRSqASbfmUyKEA9V-Rr8nO-admrixgzZUFM5Zo6jZ4MEJ3HheB44otPFu6iow8zqRWmduEwduzr52vmxl3Q",
+      alt: "Gold pendant necklace with delicate chain",
     },
     {
-      name: "Fashion",
-      icon: <Shirt className="w-8 h-8" />,
-      items: 2100,
-      bgColor: "bg-pink-50",
-      iconColor: "text-pink-600",
+      name: "Earrings",
+      subtitle: "Pearl Drops",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuAI2-K-J6ajMVx2a0KCHqU5fnzR-YhvkU4wDFo8I545wHE0F7hGAQz2r0uzwxp7xBM_i-5O0h6pa56Xz9io8Nhj9JP5rpZbAddQurDREs_xe-FNxY418QZIauflF7ugaAmFJ2hEGT7GE_5w5tHvBB8jQubz_uotR6M8tMJMWygLY4O63Vft-K1ATszD3snGMNnGZpAE0QXCrr_MShzZ5BEFFz-iaAud8-KM8I2K50cKjJouJstY2-um1YIG9ysgdk_JlAm0i4AiErZW",
+      alt: "Pair of elegant pearl drop earrings",
     },
     {
-      name: "Kitchen",
-      icon: <CookingPot className="w-8 h-8" />,
-      items: 750,
-      bgColor: "bg-orange-50",
-      iconColor: "text-orange-600",
-    },
-    {
-      name: "Sports",
-      icon: <Dumbbell className="w-8 h-8" />,
-      items: 620,
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
-    },
-    {
-      name: "Books",
-      icon: <Book className="w-8 h-8" />,
-      items: 1500,
-      bgColor: "bg-yellow-50",
-      iconColor: "text-yellow-600",
+      name: "Bracelets",
+      subtitle: "Structured Cuffs",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuDuPf3jxMUSW4JMR-P-tfG8nBCK2pEvZBGtNY0RQiDhn_ioKvv5qyzXMQvK4emAW0b6FEcz2udf_Xp_n3JbVRfUhy4O8seVqeyQttOG967qdWN9mCuznhVqeXofAdQvYw8UjN-T4Cng4uR8m2mJF4GgKwp8zj5C90_oHTMByooHUtmy6vgtcesrOdE2R8SloBHrf_1yVGhSwNcOl5MYmasFkXLFMQ6ghy0IDMnWoBXEK1eHdqOKuYq0AVXXPXnyB_9gmISMqx0_uUZw",
+      alt: "Structured gold cuff bracelet",
     },
   ];
 
-  return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Shop by Category
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Browse through our wide range of categories to find exactly what
-            you're looking for.
-          </p>
-        </div>
+  const sectionHeaderStyle = {
+    maxWidth: "1280px",
+    margin: "0 auto 48px",
+    padding: "0 24px",
+    textAlign: "center",
+  };
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+  const gridStyle = {
+    gap: "48px",
+    maxWidth: "1280px",
+    margin: "0 auto 128px",
+    padding: "0 24px",
+  };
+
+  const categoryItemStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    cursor: "pointer",
+  };
+
+  const imageContainerStyle = {
+    position: "relative",
+    marginBottom: "24px",
+    overflow: "hidden",
+    borderRadius: "50%",
+    aspectRatio: "1",
+    width: "100%",
+    maxWidth: "220px",
+    border: "1px solid rgba(166, 144, 89, 0.1)",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+  };
+
+  return (
+    <>
+      {/* Section Header */}
+      <section style={sectionHeaderStyle}>
+        <h2
+          style={{
+            color: "#7c786e",
+            fontSize: "0.75rem",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            letterSpacing: "0.4em",
+            marginBottom: "16px",
+          }}
+        >
+          Curated Selections
+        </h2>
+        <p
+          style={{
+            fontSize: "1.875rem",
+            fontWeight: 300,
+            marginBottom: "24px",
+          }}
+        >
+          Shop by Category
+        </p>
+        <div
+          style={{
+            width: "64px",
+            height: "1px",
+            backgroundColor: "#a69059",
+            margin: "0 auto",
+          }}
+        ></div>
+      </section>
+
+      {/* Category Grid */}
+      <section>
+        <div style={gridStyle} className="grid md:grid-cols-4 grid-cols-2">
           {categories.map((category, index) => (
-            <Link
+            <div
               key={index}
-              to={`/products?category=${category.name.toLowerCase()}`}
-              className="group"
+              style={categoryItemStyle}
+              className="hover-scale"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.02)";
+                e.currentTarget.style.boxShadow =
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.25)";
+                const img = e.currentTarget.querySelector(".image-zoom");
+                if (img) img.style.transform = "scale(1.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+                const img = e.currentTarget.querySelector(".image-zoom");
+                if (img) img.style.transform = "scale(1)";
+              }}
             >
-              <div className="bg-white rounded-xl p-6 text-center border border-gray-100 hover:border-[#8B4513]/30 hover:shadow-lg transition-all duration-300">
+              <div style={imageContainerStyle}>
                 <div
-                  className={`${category.bgColor} ${category.iconColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  {category.icon}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-[#8B4513] transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-sm text-gray-500">{category.items} items</p>
+                  className="image-zoom"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundImage: `url('${category.image}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    transition: "transform 0.7s",
+                  }}
+                  aria-label={category.alt}
+                />
               </div>
-            </Link>
+              <p
+                style={{
+                  color: "#161513",
+                  fontSize: "1.125rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.025em",
+                  marginBottom: "4px",
+                }}
+              >
+                {category.name}
+              </p>
+              <p
+                style={{
+                  color: "#7c786e",
+                  fontSize: "0.75rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  transition: "color 0.3s",
+                }}
+              >
+                {category.subtitle}
+              </p>
+            </div>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
-export default CategorySection;
+export default Categories;
