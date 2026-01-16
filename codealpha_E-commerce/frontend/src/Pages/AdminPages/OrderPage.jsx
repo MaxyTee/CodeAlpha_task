@@ -20,7 +20,6 @@ import {
 import AdminLayout from "../AdminPage";
 
 const AdminOrdersPage = () => {
-  const {}
   const [orders, setOrders] = useState([
     {
       id: "ORD-2841",
