@@ -151,3 +151,4 @@ export const deleteProduct = async (req, res) => {
     console.log("Error", error.message);
   }
 };
+

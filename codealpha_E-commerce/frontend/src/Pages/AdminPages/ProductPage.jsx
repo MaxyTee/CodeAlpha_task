@@ -31,47 +31,7 @@ const ProductPage = () => {
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-
-  // const [products, setProducts] = useState([
-  //   {
-  //     _id: "1",
-  //     name: "Éternité Diamond Ring",
-  //     description: "18k gold ring with brilliant-cut diamond centerpiece",
-  //     image: [
-  //       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop",
-  //       "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&auto=format&fit=crop",
-  //     ],
-  //     price: 1899,
-  //     category: "Rings",
-  //     oldPrice: 2299,
-  //     rating: 4.8,
-  //     reviewsCount: 42,
-  //     slug: "eternite-diamond-ring",
-  //     sizes: ["6", "7", "8", "9"],
-  //     stock: 15,
-  //     isFeatured: true,
-  //     createdAt: "2024-01-01",
-  //   },
-  //   {
-  //     _id: "2",
-  //     name: "Celestial Pearl Earrings",
-  //     description: "South Sea pearls set in 14k yellow gold",
-  //     image: [
-  //       "https://images.unsplash.com/photo-1594576722512-582d5577dd56?w=600&auto=format&fit=crop",
-  //       "https://images.unsplash.com/photo-1535632787341-90c18cef64e1?w=600&auto=format&fit=crop",
-  //     ],
-  //     price: 895,
-  //     category: "Earrings",
-  //     oldPrice: 1095,
-  //     rating: 4.5,
-  //     reviewsCount: 28,
-  //     slug: "celestial-pearl-earrings",
-  //     sizes: [],
-  //     stock: 8,
-  //     isFeatured: true,
-  //     createdAt: "2024-01-05",
-  //   },
-  // ]);
+  const [selectedProduct, setSelectedProduct] = useState([])
 
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -110,9 +70,6 @@ const ProductPage = () => {
     FetchProduct();
   }, []);
 
-  // console.log(allProduct);
-
-  // Drag and Drop Handlers
   const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -145,7 +102,6 @@ const ProductPage = () => {
     await handleFiles(files);
   };
 
-  // Handle File Upload Simulation
   const handleFiles = async (files) => {
     const imageFiles = files.filter(
       (file) =>
@@ -261,18 +217,9 @@ const ProductPage = () => {
 
     try {
       await createProduct(formData);
+
       setUploading(false);
-      
-
-      setProducts([
-        {
-          ...product,
-          _id: Date.now().toString(),
-          createdAt: new Date().toISOString(),
-        },
-        ...products,
-      ]);
-
+  
       // Reset form
       setNewProduct({
         name: "",
@@ -288,6 +235,8 @@ const ProductPage = () => {
         stock: "0",
         isFeatured: false,
       });
+      console.log("Hello2")
+
 
       setShowCreateModal(false);
     } catch (error) {
@@ -299,7 +248,15 @@ const ProductPage = () => {
     await deleteProduct(id);
   };
   const handleUpdateProduct = async (id) => {
-    await updateProduct(id);
+    console.log(selectedProduct)
+    setShowCreateModal(true)
+
+    
+    setUploading(true);
+
+    const slug = generateSlug(newProduct.name);
+
+    // await updateProduct(id);
   };
 
   const addSizeField = () => {
@@ -419,7 +376,7 @@ const ProductPage = () => {
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleUpdateProduct(product._id)}
+                    onClick={() => {handleUpdateProduct(product._id),setSelectedProduct(product)}}
                     className="flex-1 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     Edit

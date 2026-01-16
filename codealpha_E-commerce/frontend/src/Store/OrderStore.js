@@ -28,7 +28,7 @@ export const useOrderStore = create((set, get) => ({
       }
 
       set({ isLoading: false, error: null, AllOrders: data.orders });
-      toast.success(data.message);
+      
     } catch (error) {
       console.log("Error", error);
       set({
@@ -53,7 +53,7 @@ export const useOrderStore = create((set, get) => ({
       }
 
       set({ isLoading: false, error: null, userOrders: data.orders });
-      toast.success(data.message);
+    
     } catch (error) {
       console.log("Error", error);
       set({
@@ -71,16 +71,16 @@ export const useOrderStore = create((set, get) => ({
         payload
       );
       if (!data.success) {
-        set({ isLoading: false, error: data.message });
         toast.error(data.message);
+        set({ isLoading: false, error: data.message });
       }
 
       const { getAllOrders, getUserOrder } = get();
       await getAllOrders(true);
       await getUserOrder(payload.user);
 
-      set({ isLoading: false, error: null, order: data.order });
       toast.success(data.message);
+      set({ isLoading: false, error: null, order: data.order });
     } catch (error) {
       console.log("Error", error);
       set({

@@ -17,7 +17,9 @@ import AddressPage from "./UserPages/AddressPage";
 import { useAuthStore } from "../Store/authStore";
 
 const UserPage = () => {
-  const { user } = useAuthStore();
+  const {user} = useAuthStore()
+  console.log(user)
+  
   const [activeTab, setActiveTab] = useState("overview");
 
   // Mock user data

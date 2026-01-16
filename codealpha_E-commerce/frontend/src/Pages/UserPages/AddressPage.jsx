@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MapPin,
   Edit2,
@@ -8,131 +8,131 @@ import {
   Home,
   Briefcase,
   User,
+  Loader2
 } from "lucide-react";
 import Header from "../../Component/Header";
+import { useAuthStore } from "../../Store/authStore";
 
 const AddressPage = () => {
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      name: "Alexandra Morgan",
-      address: "123 Jewelry Street",
-      city: "New York",
-      zipCode: "10001",
-      country: "United States",
-      phone: "+1 (555) 123-4567",
-      type: "home",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      name: "Alexandra Morgan",
-      address: "456 Business Avenue",
-      city: "Brooklyn",
-      zipCode: "11201",
-      country: "United States",
-      phone: "+1 (555) 987-6543",
-      type: "work",
-      isDefault: false,
-    },
-    {
-      id: 3,
-      name: "Alex Morgan",
-      address: "789 Luxury Lane",
-      city: "Manhattan",
-      zipCode: "10016",
-      country: "United States",
-      phone: "+1 (555) 456-7890",
-      type: "other",
-      isDefault: false,
-    },
-  ]);
+  const { userAddress, user, updateUserAddress } = useAuthStore();
+  const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [newAddress, setNewAddress] = useState({
-    name: "",
     address: "",
-    city: "",
-    zipCode: "",
+    addressType: "home",
     country: "United States",
-    phone: "",
-    type: "home",
-    isDefault: false,
+    default: false,
   });
 
-  const handleAddAddress = () => {
-    if (editingAddress) {
-      // Update existing address
-      setAddresses(
-        addresses.map((addr) =>
-          addr.id === editingAddress.id
-            ? { ...newAddress, id: editingAddress.id }
-            : newAddress.isDefault
-            ? { ...addr, isDefault: false }
-            : addr
-        )
-      );
-      setEditingAddress(null);
-    } else {
-      // Add new address
-      const newId = Math.max(...addresses.map((a) => a.id)) + 1;
-      setAddresses([
-        ...addresses.map((addr) =>
-          newAddress.isDefault ? { ...addr, isDefault: false } : addr
-        ),
-        { ...newAddress, id: newId },
-      ]);
+  // Initialize addresses from user data
+  const [addresses, setAddresses] = useState(user?.addresses || []);
+
+  useEffect(() => {
+    if (user?.addresses) {
+      setAddresses(user.addresses);
+    }
+  }, [user]);
+
+  const handleAddAddress = async () => {
+    if (!newAddress.address.trim()) {
+      alert("Please enter an address");
+      return;
     }
 
-    setNewAddress({
-      name: "",
-      address: "",
-      city: "",
-      zipCode: "",
-      country: "United States",
-      phone: "",
-      type: "home",
-      isDefault: false,
-    });
-    setShowAddForm(false);
+    setIsAddingAddress(true);
+    try {
+      const payload = { ...newAddress };
+      await userAddress(payload);
+      
+      // Update local state with the new address
+      const updatedAddresses = user?.addresses || [];
+      setAddresses(updatedAddresses);
+      
+      // Reset form
+      setNewAddress({
+        address: "",
+        addressType: "home",
+        country: "United States",
+        default: false,
+      });
+      setShowAddForm(false);
+      setEditingAddress(null);
+    } catch (error) {
+      console.error("Error adding address:", error);
+      alert("Failed to add address. Please try again.");
+    } finally {
+      setIsAddingAddress(false);
+    }
   };
 
   const handleEditAddress = (address) => {
-    setNewAddress(address);
+    setNewAddress({
+      address: address.address || "",
+      addressType: address.addressType || "home",
+      country: address.country || "United States",
+      default: address.default || false,
+    });
     setEditingAddress(address);
     setShowAddForm(true);
   };
 
-  const handleDeleteAddress = (id) => {
+  const handleDeleteAddress = async (index) => {
     if (window.confirm("Are you sure you want to delete this address?")) {
-      const addressToDelete = addresses.find((addr) => addr.id === id);
-      const wasDefault = addressToDelete?.isDefault;
-
-      const updatedAddresses = addresses.filter((addr) => addr.id !== id);
-
-      // If we deleted the default address and there are other addresses, make the first one default
-      if (wasDefault && updatedAddresses.length > 0) {
-        updatedAddresses[0].isDefault = true;
+      setIsLoading(true);
+      try {
+        const updatedAddresses = [...addresses];
+        updatedAddresses.splice(index, 1);
+        
+        // Update the addresses (removing the deleted one)
+        await updateUserAddress({ addresses: updatedAddresses });
+        
+        // Update local state
+        setAddresses(updatedAddresses);
+      } catch (error) {
+        console.error("Error deleting address:", error);
+        alert("Failed to delete address. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-
-      setAddresses(updatedAddresses);
     }
   };
 
-  const handleSetDefault = (id) => {
-    setAddresses(
-      addresses.map((addr) => ({
+  const handleSetDefault = async (index) => {
+    setIsLoading(true);
+    try {
+      // Update all addresses: set the selected one as default, others as not default
+      const updatedAddresses = addresses.map((addr, idx) => ({
         ...addr,
-        isDefault: addr.id === id,
-      }))
-    );
+        default: idx === index
+      }));
+      
+      await updateUserAddress({ addresses: updatedAddresses });
+      setAddresses(updatedAddresses);
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      alert("Failed to set default address. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addressTypeIcons = {
     home: Home,
     work: Briefcase,
     other: User,
+  };
+
+  // Get address type display name
+  const getAddressTypeDisplay = (type) => {
+    const typeMap = {
+      home: "Home",
+      work: "Work",
+      other: "Other"
+    };
+    return typeMap[type] || type;
   };
 
   return (
@@ -149,102 +149,110 @@ const AddressPage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Address Cards */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {addresses.map((address) => {
-                const TypeIcon = addressTypeIcons[address.type] || Home;
-                return (
-                  <div
-                    key={address.id}
-                    className={`bg-white rounded-lg border-2 p-6 shadow-sm ${
-                      address.isDefault ? "border-amber-500" : "border-gray-200"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-amber-50 rounded-lg">
-                          <TypeIcon className="text-amber-600" size={20} />
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="animate-spin text-amber-600" size={32} />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {addresses.map((address, index) => {
+                  const TypeIcon = addressTypeIcons[address.addressType] || Home;
+                  return (
+                    <div
+                      key={index}
+                      className={`bg-white rounded-lg border-2 p-6 shadow-sm ${
+                        address.default ? "border-amber-500" : "border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-amber-50 rounded-lg">
+                            <TypeIcon className="text-amber-600" size={20} />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900 capitalize">
+                              {getAddressTypeDisplay(address.addressType)} Address
+                            </h3>
+                            {address.default && (
+                              <span className="inline-block px-2 py-1 text-xs bg-amber-100 text-amber-800 rounded-full mt-1">
+                                Default
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900 capitalize">
-                            {address.type} Address
-                          </h3>
-                          {address.isDefault && (
-                            <span className="inline-block px-2 py-1 text-xs bg-amber-100 text-amber-800 rounded-full mt-1">
-                              Default
-                            </span>
-                          )}
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditAddress(address)}
+                            className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAddress(index)}
+                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditAddress(address)}
-                          className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteAddress(address.id)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                      <div className="space-y-2 mb-6">
+                        <p className="text-gray-600">{address.address}</p>
+                        <p className="text-gray-600">{address.country}</p>
+                        {address.city && (
+                          <p className="text-gray-600">City: {address.city}</p>
+                        )}
+                        {address.zipCode && (
+                          <p className="text-gray-600">ZIP: {address.zipCode}</p>
+                        )}
+                        {address.phone && (
+                          <p className="text-gray-600">Phone: {address.phone}</p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-3">
+                        {!address.default && (
+                          <button
+                            onClick={() => handleSetDefault(index)}
+                            className="flex-1 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                          >
+                            Set as Default
+                          </button>
+                        )}
+                        {address.default && (
+                          <button
+                            className="flex-1 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg cursor-default flex items-center justify-center gap-2"
+                            disabled
+                          >
+                            <Check size={16} />
+                            Default Address
+                          </button>
+                        )}
                       </div>
                     </div>
+                  );
+                })}
 
-                    <div className="space-y-2 mb-6">
-                      <p className="font-medium text-gray-900">
-                        {address.name}
+                {/* Add New Address Card */}
+                {!showAddForm && (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg hover:border-amber-400 transition-colors">
+                    <button
+                      onClick={() => setShowAddForm(true)}
+                      className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-6 text-gray-500 hover:text-amber-600"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                        <Plus size={24} />
+                      </div>
+                      <p className="font-medium text-gray-900">Add New Address</p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Add a new shipping address
                       </p>
-                      <p className="text-gray-600">{address.address}</p>
-                      <p className="text-gray-600">
-                        {address.city}, {address.zipCode}
-                      </p>
-                      <p className="text-gray-600">{address.country}</p>
-                      <p className="text-gray-600">{address.phone}</p>
-                    </div>
-
-                    <div className="flex gap-3">
-                      {!address.isDefault && (
-                        <button
-                          onClick={() => handleSetDefault(address.id)}
-                          className="flex-1 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
-                        >
-                          Set as Default
-                        </button>
-                      )}
-                      {address.isDefault && (
-                        <button
-                          className="flex-1 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg cursor-default flex items-center justify-center gap-2"
-                          disabled
-                        >
-                          <Check size={16} />
-                          Default Address
-                        </button>
-                      )}
-                    </div>
+                    </button>
                   </div>
-                );
-              })}
-
-              {/* Add New Address Card */}
-              {!showAddForm && (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg hover:border-amber-400 transition-colors">
-                  <button
-                    onClick={() => setShowAddForm(true)}
-                    className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-6 text-gray-500 hover:text-amber-600"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                      <Plus size={24} />
-                    </div>
-                    <p className="font-medium text-gray-900">Add New Address</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Add a new shipping address
-                    </p>
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Add/Edit Form Sidebar */}
@@ -258,69 +266,18 @@ const AddressPage = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name
+                      Address *
                     </label>
-                    <input
-                      type="text"
-                      value={newAddress.name}
-                      onChange={(e) =>
-                        setNewAddress({ ...newAddress, name: e.target.value })
-                      }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                      placeholder="John Doe"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Address
-                    </label>
-                    <input
-                      type="text"
+                    <textarea
                       value={newAddress.address}
                       onChange={(e) =>
-                        setNewAddress({
-                          ...newAddress,
-                          address: e.target.value,
-                        })
+                        setNewAddress({ ...newAddress, address: e.target.value })
                       }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                      placeholder="123 Main Street"
+                      placeholder="123 Main Street, Apt 4B"
+                      rows="3"
+                      required
                     />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        value={newAddress.city}
-                        onChange={(e) =>
-                          setNewAddress({ ...newAddress, city: e.target.value })
-                        }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                        placeholder="New York"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ZIP Code
-                      </label>
-                      <input
-                        type="text"
-                        value={newAddress.zipCode}
-                        onChange={(e) =>
-                          setNewAddress({
-                            ...newAddress,
-                            zipCode: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                        placeholder="10001"
-                      />
-                    </div>
                   </div>
 
                   <div>
@@ -341,22 +298,8 @@ const AddressPage = () => {
                       <option value="Canada">Canada</option>
                       <option value="United Kingdom">United Kingdom</option>
                       <option value="Australia">Australia</option>
+                      <option value="Nigeria">Nigeria</option>
                     </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={newAddress.phone}
-                      onChange={(e) =>
-                        setNewAddress({ ...newAddress, phone: e.target.value })
-                      }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                      placeholder="+1 (555) 123-4567"
-                    />
                   </div>
 
                   <div>
@@ -371,17 +314,17 @@ const AddressPage = () => {
                             key={type}
                             type="button"
                             onClick={() =>
-                              setNewAddress({ ...newAddress, type })
+                              setNewAddress({ ...newAddress, addressType: type })
                             }
                             className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 ${
-                              newAddress.type === type
+                              newAddress.addressType === type
                                 ? "border-amber-500 bg-amber-50"
                                 : "border-gray-200 hover:border-gray-300"
                             }`}
                           >
                             <TypeIcon size={20} className="mb-2" />
                             <span className="text-sm font-medium capitalize">
-                              {type}
+                              {getAddressTypeDisplay(type)}
                             </span>
                           </button>
                         );
@@ -393,11 +336,11 @@ const AddressPage = () => {
                     <input
                       type="checkbox"
                       id="default"
-                      checked={newAddress.isDefault}
+                      checked={newAddress.default}
                       onChange={(e) =>
                         setNewAddress({
                           ...newAddress,
-                          isDefault: e.target.checked,
+                          default: e.target.checked,
                         })
                       }
                       className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
@@ -410,23 +353,33 @@ const AddressPage = () => {
                   <div className="flex gap-3 pt-4">
                     <button
                       onClick={handleAddAddress}
-                      className="flex-1 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700"
+                      disabled={isAddingAddress || !newAddress.address.trim()}
+                      className={`flex-1 py-3 font-medium rounded-lg flex items-center justify-center gap-2 ${
+                        isAddingAddress || !newAddress.address.trim()
+                          ? "bg-gray-300 cursor-not-allowed"
+                          : "bg-amber-600 text-white hover:bg-amber-700"
+                      }`}
                     >
-                      {editingAddress ? "Update Address" : "Add Address"}
+                      {isAddingAddress ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          Processing...
+                        </>
+                      ) : editingAddress ? (
+                        "Update Address"
+                      ) : (
+                        "Add Address"
+                      )}
                     </button>
                     <button
                       onClick={() => {
                         setShowAddForm(false);
                         setEditingAddress(null);
                         setNewAddress({
-                          name: "",
                           address: "",
-                          city: "",
-                          zipCode: "",
+                          addressType: "home",
                           country: "United States",
-                          phone: "",
-                          type: "home",
-                          isDefault: false,
+                          default: false,
                         });
                       }}
                       className="px-4 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -466,11 +419,11 @@ const AddressPage = () => {
 
                   <div>
                     <h4 className="font-medium text-gray-900 mb-2">
-                      Multiple Addresses
+                      Address Structure
                     </h4>
                     <p className="text-sm text-gray-600">
-                      You can add multiple addresses for home, work, or gift
-                      shipping.
+                      Include street, apartment/unit number, city, and ZIP code
+                      for best delivery results.
                     </p>
                   </div>
                 </div>
