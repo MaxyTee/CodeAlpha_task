@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, Sparkles, Shield, Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../Store/authStore";
 
 const LoginPage = () => {
@@ -12,6 +12,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +32,10 @@ const LoginPage = () => {
         setIsLoading(false);
       } else {
         await userLogin(payload);
+        console.log(location.state);
+        if (location.state) {
+          return navigate(location.state?.from);
+        }
         navigate("/user-page");
         setIsLoading(false);
       }
@@ -64,7 +69,6 @@ const LoginPage = () => {
   return (
     <div style={containerStyle}>
       <div style={loginBoxStyle}>
-        {/* Brand Logo */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <div
             style={{
@@ -75,7 +79,6 @@ const LoginPage = () => {
               marginBottom: "16px",
             }}
           >
-            <Sparkles size={28} color="#a69059" />
             <h1
               style={{
                 fontSize: "2rem",
@@ -99,7 +102,6 @@ const LoginPage = () => {
             {isAdminLogin ? "Admin Portal" : "Client Portal"}
           </p>
 
-          {/* Login Type Toggle */}
           <div
             style={{
               display: "flex",
@@ -155,7 +157,6 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Admin Notice */}
         {isAdminLogin && (
           <div
             style={{
@@ -184,7 +185,6 @@ const LoginPage = () => {
           </div>
         )}
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "24px" }}>
             <label
@@ -407,7 +407,6 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* Sign Up Link - Only show for client login */}
         {!isAdminLogin && (
           <div className="flex mt-6 items-center gap-1 justify-center">
             <p

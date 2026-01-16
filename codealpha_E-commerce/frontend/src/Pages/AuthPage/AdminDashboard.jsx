@@ -111,34 +111,6 @@ const DashboardPage = () => {
     },
   ];
 
-  // Top products
-  //   const topProducts = [
-  //     {
-  //       name: "Éternité Diamond Ring",
-  //       sales: 84,
-  //       revenue: "$159,516",
-  //       rating: 4.8,
-  //     },
-  //     {
-  //       name: "Celestial Pearl Earrings",
-  //       sales: 62,
-  //       revenue: "$55,490",
-  //       rating: 4.5,
-  //     },
-  //     {
-  //       name: "Infinity Pendant Necklace",
-  //       sales: 45,
-  //       revenue: "$74,250",
-  //       rating: 4.9,
-  //     },
-  //     {
-  //       name: "Minimalist Gold Cuff",
-  //       sales: 38,
-  //       revenue: "$47,500",
-  //       rating: 4.7,
-  //     },
-  //   ];
-
   return (
     <AdminLayout>
       <div className="p-6">

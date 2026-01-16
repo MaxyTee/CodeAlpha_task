@@ -20,14 +20,12 @@ import { useEffect } from "react";
 import { useAuthStore } from "../Store/authStore";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
+import { useOrderStore } from "../Store/OrderStore";
 
 const CartPage = () => {
-  const {
-    cart: cartItems,
-    getCart,
-    removeFromCart,
-    increaseProductQuantity,
-  } = useCartStore();
+  const { cart, getCart, removeFromCart, increaseProductQuantity } =
+    useCartStore();
+  const { createOrder } = useOrderStore();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { user } = useAuthStore();
@@ -46,19 +44,19 @@ const CartPage = () => {
     FetchCart();
   }, []);
 
-  console.log(cartItems);
+  console.log(cart);
 
-  // Calculate totals
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item?.product?.price * item.quantity,
     0
   );
   const shipping = subtotal > 1000 ? 0 : 25;
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
-  const totalSavings = cartItems.reduce(
+  const totalSavings = cart.reduce(
     (sum, item) =>
-      sum + (item.product.originalPrice - item.product.price) * item.quantity,
+      sum +
+      (item?.product?.originalPrice - item?.product?.price) * item.quantity,
     0
   );
 
@@ -91,6 +89,11 @@ const CartPage = () => {
     { icon: RotateCcw, text: "30-Day Easy Returns & Exchanges" },
   ];
 
+  const handleOrder = async () => {
+    const payload = { user: user._id, items: cart, totalAmount: total };
+    await createOrder(payload);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -101,176 +104,179 @@ const CartPage = () => {
             Your Shopping Bag
           </h1>
           <p className="text-gray-600 mt-2">
-            {cartItems.length} exquisite jewelry pieces
+            {cart.length} exquisite jewelry pieces
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
-            {cartItems.map((item) => (
-              <div
-                key={item.product._id}
-                className="bg-white rounded-2xl p-6 hover:shadow-xl transition-shadow"
-              >
-                <div className="flex flex-col sm:flex-row gap-6">
-                  {/* Product Image */}
-                  <div className="flex-shrink-0">
-                    <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-100">
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Product Details */}
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium text-[#a69059] bg-[#a69059]/10 px-2 py-1 rounded">
-                            {item.product.category}
-                          </span>
-                          {item.product.originalPrice && (
-                            <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded">
-                              Save $
-                              {(
-                                item.product.originalPrice -
-                                item.product.price.toLocaleString()
-                              ).toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {item.product.name}
-                        </h3>
-
-                        <p className="text-gray-600 text-sm mb-3">
-                          {item.product.description}
-                        </p>
-
-                        {/* Rating */}
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                size={14}
-                                className={`${
-                                  i < Math.floor(item.product.rating)
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {item.product.rating} ({item.product.reviews}{" "}
-                            reviews)
-                          </span>
-                        </div>
+            {cart.map((item) => {
+              console.log(item.product);
+              return (
+                <div
+                  key={item.product._id}
+                  className="bg-white rounded-2xl p-6 hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    {/* Product Image */}
+                    <div className="flex-shrink-0">
+                      <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-100">
+                        <img
+                          src={item.product.image[0]}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-
-                      {/* Remove Button */}
-                      <button
-                        onClick={() => removeItem(item.product._id)}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        {isDeleting ? (
-                          <Loader2 size={16} className="animate-spin" />
-                        ) : (
-                          <Trash2 size={20} className="text-red-500" />
-                        )}
-                      </button>
                     </div>
 
-                    {/* Size and Actions */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-100">
-                      <div className="flex items-center gap-4">
-                        {/* Quantity Selector */}
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.product._id,
-                                item.quantity - 1
-                              )
-                            }
-                            className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="w-8 text-center font-medium">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.product._id,
-                                item.quantity + 1
-                              )
-                            }
-                            className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
-                          >
-                            <Plus size={16} />
-                          </button>
-                        </div>
-
-                        {/* Size Display */}
-                        {item.product.size && (
-                          <div className="text-sm">
-                            <span className="text-gray-500">Size: </span>
-                            <span className="font-medium">
-                              {item.product.size}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Price and Actions */}
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold text-gray-900">
-                              ${item.product.price * item.quantity}
+                    {/* Product Details */}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xs font-medium text-[#a69059] bg-[#a69059]/10 px-2 py-1 rounded">
+                              {item.product.category}
                             </span>
                             {item.product.originalPrice && (
-                              <span className="text-sm text-gray-500 line-through">
-                                $
+                              <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded">
+                                Save $
                                 {(
-                                  item.product.originalPrice * item.quantity
+                                  item.product.originalPrice -
+                                  item.product.price.toLocaleString()
                                 ).toLocaleString()}
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500">
-                            ${item.product.price} each
+
+                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                            {item.product.name}
+                          </h3>
+
+                          <p className="text-gray-600 text-sm mb-3">
+                            {item.product.description}
                           </p>
+
+                          {/* Rating */}
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  size={14}
+                                  className={`${
+                                    i < Math.floor(item.product.rating)
+                                      ? "text-yellow-400 fill-yellow-400"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-500">
+                              {item.product.rating} ({item.product.reviews}{" "}
+                              reviews)
+                            </span>
+                          </div>
                         </div>
 
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => moveToWishlist(item)}
-                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                          >
-                            <Heart size={18} className="text-gray-600" />
-                          </button>
-                          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                            <Share2 size={18} className="text-gray-600" />
-                          </button>
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => removeItem(item.product._id)}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          {isDeleting ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={20} className="text-red-500" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Size and Actions */}
+                      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-4">
+                          {/* Quantity Selector */}
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product._id,
+                                  item.quantity - 1
+                                )
+                              }
+                              className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+                            >
+                              <Minus size={16} />
+                            </button>
+                            <span className="w-8 text-center font-medium">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product._id,
+                                  item.quantity + 1
+                                )
+                              }
+                              className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+                            >
+                              <Plus size={16} />
+                            </button>
+                          </div>
+
+                          {/* Size Display */}
+                          {item.product.size && (
+                            <div className="text-sm">
+                              <span className="text-gray-500">Size: </span>
+                              <span className="font-medium">
+                                {item.product.size}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Price and Actions */}
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl font-bold text-gray-900">
+                                ${item.product.price * item.quantity}
+                              </span>
+                              {item.product.originalPrice && (
+                                <span className="text-sm text-gray-500 line-through">
+                                  $
+                                  {(
+                                    item.product.originalPrice * item.quantity
+                                  ).toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              ${item.product.price} each
+                            </p>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => moveToWishlist(item)}
+                              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                              <Heart size={18} className="text-gray-600" />
+                            </button>
+                            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                              <Share2 size={18} className="text-gray-600" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Empty Cart */}
-            {cartItems.length === 0 && (
+            {cart.length === 0 && (
               <div className="bg-white rounded-2xl p-12 text-center">
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
                   <ShoppingBag className="text-gray-400" size={32} />
@@ -352,7 +358,10 @@ const CartPage = () => {
                 </div>
 
                 {/* Checkout Button */}
-                <button className="w-full bg-[#a69059] text-white py-4 rounded-xl font-semibold hover:bg-[#a69059]/90 transition-colors shadow-sm mb-4">
+                <button
+                  onClick={() => handleOrder()}
+                  className="w-full bg-[#a69059] text-white py-4 rounded-xl font-semibold hover:bg-[#a69059]/90 transition-colors shadow-sm mb-4"
+                >
                   Proceed to Checkout
                 </button>
 
