@@ -3,11 +3,18 @@ import { Search, Heart, ShoppingBag, ChevronDown } from "lucide-react";
 import Header from "../Component/Header";
 import { useProductStore } from "../Store/ProductStore";
 import { useEffect } from "react";
+import handleAddToCart from "../utils/handleAddToCart";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../Store/authStore";
 
 const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [wishlist, setWishlist] = useState([]);
+  const { user } = useAuthStore();
   const { getAllProduct, allProduct: products } = useProductStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
 
   useEffect(() => {
     const FetchProducts = async () => {
@@ -187,7 +194,15 @@ const ProductsPage = () => {
                 </button>
 
                 {/* Quick Add to Cart */}
-                <button className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white px-6 py-2 text-sm hover:bg-gray-800">
+                <button
+                  onClick={() =>
+                    handleAddToCart(pathname, navigate, {
+                      product: product?._id,
+                      user: user?._id,
+                    })
+                  }
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white px-6 py-2 text-sm hover:bg-gray-800"
+                >
                   Add to Cart
                 </button>
               </div>

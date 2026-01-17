@@ -16,25 +16,25 @@ import AdminLayout from "../AdminPage";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useProductStore } from "../../Store/ProductStore";
+import { useOrderStore } from "../../Store/OrderStore";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { getAllProduct, allProduct: topProducts } = useProductStore();
+  const { getAllOrders, AllOrders: recentOrders } = useOrderStore();
 
   useEffect(() => {
     const FetchProduct = async () => {
       await getAllProduct();
+      await getAllOrders();
     };
     FetchProduct();
   }, []);
 
-  // Stats data
   const stats = [
     {
       title: "Total Revenue",
       value: "$42,580",
-      change: "+12.5%",
-      trend: "up",
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-100",
@@ -42,9 +42,7 @@ const DashboardPage = () => {
     },
     {
       title: "Total Orders",
-      value: "156",
-      change: "+8.2%",
-      trend: "up",
+      value: recentOrders.length,
       icon: ShoppingBag,
       color: "text-blue-600",
       bgColor: "bg-blue-100",
@@ -53,8 +51,6 @@ const DashboardPage = () => {
     {
       title: "Active Customers",
       value: "1,284",
-      change: "+5.7%",
-      trend: "up",
       icon: Users,
       color: "text-purple-600",
       bgColor: "bg-purple-100",
@@ -63,51 +59,10 @@ const DashboardPage = () => {
     {
       title: "Products",
       value: topProducts.length || 0,
-      change: "+3.1%",
-      trend: "up",
       icon: Package,
       color: "text-orange-600",
       bgColor: "bg-orange-100",
       description: "15 featured",
-    },
-  ];
-
-  // Recent orders
-  const recentOrders = [
-    {
-      id: "#ORD-8421",
-      customer: "Emma Johnson",
-      amount: "$1,899",
-      status: "Delivered",
-      time: "2 hours ago",
-    },
-    {
-      id: "#ORD-8420",
-      customer: "Michael Chen",
-      amount: "$3,200",
-      status: "Processing",
-      time: "4 hours ago",
-    },
-    {
-      id: "#ORD-8419",
-      customer: "Sarah Williams",
-      amount: "$895",
-      status: "Shipped",
-      time: "1 day ago",
-    },
-    {
-      id: "#ORD-8418",
-      customer: "Robert Garcia",
-      amount: "$2,150",
-      status: "Processing",
-      time: "2 days ago",
-    },
-    {
-      id: "#ORD-8417",
-      customer: "Lisa Brown",
-      amount: "$1,250",
-      status: "Delivered",
-      time: "3 days ago",
     },
   ];
 
@@ -139,18 +94,6 @@ const DashboardPage = () => {
                   >
                     <Icon className={stat.color} size={24} />
                   </div>
-                  <div
-                    className={`flex items-center gap-1 text-sm font-medium ${
-                      stat.trend === "up" ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {stat.trend === "up" ? (
-                      <ArrowUp size={16} />
-                    ) : (
-                      <ArrowDown size={16} />
-                    )}
-                    {stat.change}
-                  </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">
                   {stat.value}
@@ -175,7 +118,10 @@ const DashboardPage = () => {
                   Latest customer purchases
                 </p>
               </div>
-              <button className="text-[#a69059] text-sm font-medium hover:text-[#a69059]/80 flex items-center gap-1">
+              <button
+                ocClick={() => navigate("/admin/orders")}
+                className="text-[#a69059] text-sm font-medium hover:text-[#a69059]/80 flex items-center gap-1"
+              >
                 View all <ChevronRight size={16} />
               </button>
             </div>
@@ -187,25 +133,29 @@ const DashboardPage = () => {
                   className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors"
                 >
                   <div>
-                    <p className="font-medium text-gray-900">{order.id}</p>
-                    <p className="text-sm text-gray-500">{order.customer}</p>
+                    <p className="font-medium text-gray-900">
+                      {order.trackingId}
+                    </p>
+                    <p className="text-sm text-gray-500">{order.user.name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">{order.amount}</p>
+                    <p className="font-bold text-gray-900">
+                      ${order.totalAmount}
+                    </p>
                     <div className="flex items-center gap-2">
                       <span
                         className={`text-xs px-2 py-1 rounded-full ${
                           order.status === "Delivered"
                             ? "bg-green-100 text-green-700"
                             : order.status === "Shipped"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-orange-100 text-orange-700"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-orange-100 text-orange-700"
                         }`}
                       >
                         {order.status}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {order.time}
+                        {order.createdAt}
                       </span>
                     </div>
                   </div>

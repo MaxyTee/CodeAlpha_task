@@ -115,18 +115,9 @@ export const userAddresses = async (req, res) => {
     default: isDefault,
   } = req.body;
 
-
-  console.log(email)
+  console.log(email);
 
   try {
-    // const user = await User.findOne({ _id:  });
-
-    // if (!user) {
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "User not found" });
-    // }
-
     const newAddress = {
       address,
       addressType,

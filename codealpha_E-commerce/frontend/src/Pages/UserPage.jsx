@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   User,
   Package,
@@ -15,11 +15,25 @@ import {
 import Header from "../Component/Header";
 import AddressPage from "./UserPages/AddressPage";
 import { useAuthStore } from "../Store/authStore";
+import { useOrderStore } from "../Store/OrderStore";
+import formatDate from "../utils/FormatDate";
 
 const UserPage = () => {
-  const {user} = useAuthStore()
-  console.log(user)
-  
+  const { user } = useAuthStore();
+  const { userOrders, getUserOrder } = useOrderStore();
+  console.log(userOrders);
+
+  useEffect(() => {
+    const FetchOrder = async () => {
+      try {
+        await getUserOrder(user._id);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    FetchOrder();
+  }, []);
+
   const [activeTab, setActiveTab] = useState("overview");
 
   // Mock user data
@@ -27,12 +41,12 @@ const UserPage = () => {
     name: "Alexandra Morgan",
     email: "alexandra@example.com",
     memberSince: "March 2023",
-    totalOrders: 8,
+    totalOrders: userOrders.length,
     totalSpent: 12045,
     loyaltyPoints: 1240,
   };
 
-  const recentOrders = [
+  const recentOrders = userOrders || [
     {
       id: "LUXE-7890",
       item: "Éternité Diamond Ring",
@@ -174,7 +188,7 @@ const UserPage = () => {
               <div className="space-y-4">
                 {recentOrders.map((order) => (
                   <div
-                    key={order.id}
+                    key={order._id}
                     className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50"
                   >
                     <div className="flex items-center gap-4">
@@ -182,17 +196,15 @@ const UserPage = () => {
                         <Package size={18} className="text-amber-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
-                          {order.item}
-                        </p>
+                        <p className="font-medium text-gray-900">{}</p>
                         <p className="text-sm text-gray-500">
-                          {order.id} • {order.date}
+                          {order.trackingId} • {formatDate(order.createdAt)}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
-                        ${order.amount.toLocaleString()}
+                        ${order.totalAmount.toLocaleString()}
                       </p>
                       <span
                         className={`text-xs px-2 py-1 rounded-full ${

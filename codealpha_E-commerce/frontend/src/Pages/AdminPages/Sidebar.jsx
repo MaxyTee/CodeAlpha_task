@@ -75,31 +75,27 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { icon: LogOut, label: "Logout", path: "/logout" },
   ];
 
-  const getNavLinkClass = ({ isActive }) => {
-    return `
-      flex items-center gap-3 px-3 py-3 rounded-lg
-      transition-colors duration-200
-      ${
-        isActive
-          ? "bg-[#a69059] bg-opacity-20 text-[#a69059] border-l-4 border-[#a69059]"
-          : "hover:bg-gray-800 text-gray-300"
-      }
-    `;
-  };
+  // const getNavLinkClass = ({ isActive }) => {
+  //   return `
+  //     flex items-center gap-3 px-3 py-3 rounded-lg
+  //     transition-colors duration-200
+  //     ${
+  //       isActive
+  //         ? "bg-[#a69059] bg-opacity-20 text-[#a69059] border-l-4 border-[#a69059]"
+  //         : "hover:bg-gray-800 text-gray-300"
+  //     }
+  //   `;
+  // };
 
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logging out...");
-    // Example: localStorage.removeItem('token');
-    // Example: navigate('/login');
   };
 
   return (
     <>
-      {/* Mobile Overlay */}
       {!isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed  bg-black bg-opacity-50 z-40"
           onClick={() => setIsOpen(true)}
         />
       )}

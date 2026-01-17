@@ -5,7 +5,7 @@ import { Product } from "../models/product.model.js";
 
 export const createOrder = async (req, res) => {
   const { user, items, totalAmount, paymentMethod, shippingDetails } = req.body;
-  console.log(req.body);
+  console.log(shippingDetails);
   try {
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -34,12 +34,17 @@ export const createOrder = async (req, res) => {
       await product.save();
     }
 
+    const randomNumber = Math.floor(100000 + Math.random() * 900000);
+
+    const trackingId = `ORD-${randomNumber}`;
+
     const newOrder = await Order.create({
       user,
       items,
       shippingDetails,
       totalAmount,
       paymentMethod,
+      trackingId,
     });
 
     return res.status(201).json({

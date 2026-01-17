@@ -39,6 +39,8 @@ const orderSchema = new mongoose.Schema(
       enum: ["card", "paypal", "flutterwave", "paystack", "cashOnDelivery"],
       default: "cashOnDelivery",
     },
+
+    trackingId: String,
   },
   { timestamps: true }
 );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ShoppingBag,
   Search,
@@ -18,94 +18,109 @@ import {
   RefreshCw,
 } from "lucide-react";
 import AdminLayout from "../AdminPage";
+import { useOrderStore } from "../../Store/OrderStore";
 
 const AdminOrdersPage = () => {
-  const [orders, setOrders] = useState([
-    {
-      id: "ORD-2841",
-      customer: "Emma Johnson",
-      email: "emma.j@example.com",
-      date: "2024-01-15",
-      total: 1899,
-      status: "delivered",
-      items: 2,
-      itemsList: ["Éternité Diamond Ring", "Matching Band"],
-    },
-    {
-      id: "ORD-2840",
-      customer: "Michael Chen",
-      email: "michael.c@example.com",
-      date: "2024-01-14",
-      total: 3200,
-      status: "processing",
-      items: 1,
-      itemsList: ["Art Deco Engagement Ring"],
-    },
-    {
-      id: "ORD-2839",
-      customer: "Sarah Williams",
-      email: "sarah.w@example.com",
-      date: "2024-01-14",
-      total: 895,
-      status: "shipped",
-      items: 3,
-      itemsList: ["Celestial Pearl Earrings", "Pearl Necklace", "Matching Set"],
-    },
-    {
-      id: "ORD-2838",
-      customer: "Robert Garcia",
-      email: "robert.g@example.com",
-      date: "2024-01-13",
-      total: 2150,
-      status: "pending",
-      items: 1,
-      itemsList: ["Infinity Pendant Necklace"],
-    },
-    {
-      id: "ORD-2837",
-      customer: "Lisa Brown",
-      email: "lisa.b@example.com",
-      date: "2024-01-12",
-      total: 1250,
-      status: "cancelled",
-      items: 2,
-      itemsList: ["Minimalist Gold Cuff", "Stacking Ring"],
-    },
-    {
-      id: "ORD-2836",
-      customer: "David Wilson",
-      email: "david.w@example.com",
-      date: "2024-01-12",
-      total: 560,
-      status: "delivered",
-      items: 1,
-      itemsList: ["Pearl Drop Earrings"],
-    },
-    {
-      id: "ORD-2835",
-      customer: "Jessica Taylor",
-      email: "jessica.t@example.com",
-      date: "2024-01-11",
-      total: 3100,
-      status: "shipped",
-      items: 1,
-      itemsList: ["Tennis Bracelet"],
-    },
-    {
-      id: "ORD-2834",
-      customer: "James Miller",
-      email: "james.m@example.com",
-      date: "2024-01-10",
-      total: 2450,
-      status: "delivered",
-      items: 2,
-      itemsList: ["Sapphire Pendant", "Matching Earrings"],
-    },
-  ]);
+  const { getAllOrders, AllOrders: orders } = useOrderStore();
+  // const [orders, setOrders] = useState([
+  //   {
+  //     id: "ORD-2841",
+  //     customer: "Emma Johnson",
+  //     email: "emma.j@example.com",
+  //     date: "2024-01-15",
+  //     total: 1899,
+  //     status: "delivered",
+  //     items: 2,
+  //     itemsList: ["Éternité Diamond Ring", "Matching Band"],
+  //   },
+  //   {
+  //     id: "ORD-2840",
+  //     customer: "Michael Chen",
+  //     email: "michael.c@example.com",
+  //     date: "2024-01-14",
+  //     total: 3200,
+  //     status: "processing",
+  //     items: 1,
+  //     itemsList: ["Art Deco Engagement Ring"],
+  //   },
+  //   {
+  //     id: "ORD-2839",
+  //     customer: "Sarah Williams",
+  //     email: "sarah.w@example.com",
+  //     date: "2024-01-14",
+  //     total: 895,
+  //     status: "shipped",
+  //     items: 3,
+  //     itemsList: ["Celestial Pearl Earrings", "Pearl Necklace", "Matching Set"],
+  //   },
+  //   {
+  //     id: "ORD-2838",
+  //     customer: "Robert Garcia",
+  //     email: "robert.g@example.com",
+  //     date: "2024-01-13",
+  //     total: 2150,
+  //     status: "pending",
+  //     items: 1,
+  //     itemsList: ["Infinity Pendant Necklace"],
+  //   },
+  //   {
+  //     id: "ORD-2837",
+  //     customer: "Lisa Brown",
+  //     email: "lisa.b@example.com",
+  //     date: "2024-01-12",
+  //     total: 1250,
+  //     status: "cancelled",
+  //     items: 2,
+  //     itemsList: ["Minimalist Gold Cuff", "Stacking Ring"],
+  //   },
+  //   {
+  //     id: "ORD-2836",
+  //     customer: "David Wilson",
+  //     email: "david.w@example.com",
+  //     date: "2024-01-12",
+  //     total: 560,
+  //     status: "delivered",
+  //     items: 1,
+  //     itemsList: ["Pearl Drop Earrings"],
+  //   },
+  //   {
+  //     id: "ORD-2835",
+  //     customer: "Jessica Taylor",
+  //     email: "jessica.t@example.com",
+  //     date: "2024-01-11",
+  //     total: 3100,
+  //     status: "shipped",
+  //     items: 1,
+  //     itemsList: ["Tennis Bracelet"],
+  //   },
+  //   {
+  //     id: "ORD-2834",
+  //     customer: "James Miller",
+  //     email: "james.m@example.com",
+  //     date: "2024-01-10",
+  //     total: 2450,
+  //     status: "delivered",
+  //     items: 2,
+  //     itemsList: ["Sapphire Pendant", "Matching Earrings"],
+  //   },
+  // ]);
 
+  console.log(orders);
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  // const [selectedOrder, setSelectedOrder] = useState(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        await getAllOrders();
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+
+    fetchOrder();
+  }, []);
 
   const getStatusInfo = (status) => {
     switch (status) {
@@ -156,7 +171,7 @@ const AdminOrdersPage = () => {
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.trackingId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.email.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -175,7 +190,10 @@ const AdminOrdersPage = () => {
     cancelled: orders.filter((o) => o.status === "cancelled").length,
   };
 
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + order.totalAmount,
+    0
+  );
   const averageOrderValue =
     orders.length > 0 ? totalRevenue / orders.length : 0;
 
@@ -340,7 +358,7 @@ const AdminOrdersPage = () => {
 
             return (
               <div
-                key={order.id}
+                key={order._id}
                 className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 {/* Order Header */}
@@ -348,7 +366,7 @@ const AdminOrdersPage = () => {
                   <div className="flex justify-between items-center mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {order.id}
+                        #ORD-{order._id}
                       </h3>
                       <p className="text-sm text-gray-500">{order.date}</p>
                     </div>
@@ -369,9 +387,11 @@ const AdminOrdersPage = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">
-                        {order.customer}
+                        {order?.user.name}
                       </p>
-                      <p className="text-sm text-gray-500">{order.email}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.user.email}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -380,16 +400,16 @@ const AdminOrdersPage = () => {
                 <div className="p-5">
                   <div className="mb-4">
                     <p className="text-sm text-gray-500 mb-2">
-                      Items ({order.items})
+                      Items ({order.items.length})
                     </p>
                     <div className="space-y-1">
-                      {order.itemsList.map((item, index) => (
+                      {order.items.map((item, index) => (
                         <div
                           key={index}
                           className="flex items-center gap-2 text-sm"
                         >
                           <div className="w-1.5 h-1.5 rounded-full bg-[#a69059]"></div>
-                          <span className="text-gray-700">{item}</span>
+                          <span className="text-gray-700">{item.name}</span>
                         </div>
                       ))}
                     </div>
@@ -399,7 +419,7 @@ const AdminOrdersPage = () => {
                     <div>
                       <p className="text-sm text-gray-500">Total</p>
                       <p className="text-xl font-bold text-gray-900">
-                        ${order.total.toLocaleString()}
+                        ${order.totalAmount.toLocaleString()}
                       </p>
                     </div>
                     <div className="flex gap-2">
