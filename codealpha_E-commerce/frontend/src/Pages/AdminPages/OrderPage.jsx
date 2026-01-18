@@ -19,96 +19,14 @@ import {
 } from "lucide-react";
 import AdminLayout from "../AdminPage";
 import { useOrderStore } from "../../Store/OrderStore";
+import formatDate from "../../utils/FormatDate";
 
 const AdminOrdersPage = () => {
   const { getAllOrders, AllOrders: orders } = useOrderStore();
-  // const [orders, setOrders] = useState([
-  //   {
-  //     id: "ORD-2841",
-  //     customer: "Emma Johnson",
-  //     email: "emma.j@example.com",
-  //     date: "2024-01-15",
-  //     total: 1899,
-  //     status: "delivered",
-  //     items: 2,
-  //     itemsList: ["Éternité Diamond Ring", "Matching Band"],
-  //   },
-  //   {
-  //     id: "ORD-2840",
-  //     customer: "Michael Chen",
-  //     email: "michael.c@example.com",
-  //     date: "2024-01-14",
-  //     total: 3200,
-  //     status: "processing",
-  //     items: 1,
-  //     itemsList: ["Art Deco Engagement Ring"],
-  //   },
-  //   {
-  //     id: "ORD-2839",
-  //     customer: "Sarah Williams",
-  //     email: "sarah.w@example.com",
-  //     date: "2024-01-14",
-  //     total: 895,
-  //     status: "shipped",
-  //     items: 3,
-  //     itemsList: ["Celestial Pearl Earrings", "Pearl Necklace", "Matching Set"],
-  //   },
-  //   {
-  //     id: "ORD-2838",
-  //     customer: "Robert Garcia",
-  //     email: "robert.g@example.com",
-  //     date: "2024-01-13",
-  //     total: 2150,
-  //     status: "pending",
-  //     items: 1,
-  //     itemsList: ["Infinity Pendant Necklace"],
-  //   },
-  //   {
-  //     id: "ORD-2837",
-  //     customer: "Lisa Brown",
-  //     email: "lisa.b@example.com",
-  //     date: "2024-01-12",
-  //     total: 1250,
-  //     status: "cancelled",
-  //     items: 2,
-  //     itemsList: ["Minimalist Gold Cuff", "Stacking Ring"],
-  //   },
-  //   {
-  //     id: "ORD-2836",
-  //     customer: "David Wilson",
-  //     email: "david.w@example.com",
-  //     date: "2024-01-12",
-  //     total: 560,
-  //     status: "delivered",
-  //     items: 1,
-  //     itemsList: ["Pearl Drop Earrings"],
-  //   },
-  //   {
-  //     id: "ORD-2835",
-  //     customer: "Jessica Taylor",
-  //     email: "jessica.t@example.com",
-  //     date: "2024-01-11",
-  //     total: 3100,
-  //     status: "shipped",
-  //     items: 1,
-  //     itemsList: ["Tennis Bracelet"],
-  //   },
-  //   {
-  //     id: "ORD-2834",
-  //     customer: "James Miller",
-  //     email: "james.m@example.com",
-  //     date: "2024-01-10",
-  //     total: 2450,
-  //     status: "delivered",
-  //     items: 2,
-  //     itemsList: ["Sapphire Pendant", "Matching Earrings"],
-  //   },
-  // ]);
 
   console.log(orders);
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  // const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -169,6 +87,10 @@ const AdminOrdersPage = () => {
     }
   };
 
+  console.log(
+    orders.map((order) => order.totalAmount).reduce((acc, num) => acc + num, 0),
+  );
+
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.trackingId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -192,7 +114,7 @@ const AdminOrdersPage = () => {
 
   const totalRevenue = orders.reduce(
     (sum, order) => sum + order.totalAmount,
-    0
+    0,
   );
   const averageOrderValue =
     orders.length > 0 ? totalRevenue / orders.length : 0;
@@ -366,9 +288,11 @@ const AdminOrdersPage = () => {
                   <div className="flex justify-between items-center mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        #ORD-{order._id}
+                        {order.trackingId}
                       </h3>
-                      <p className="text-sm text-gray-500">{order.date}</p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(order.createdAt)}
+                      </p>
                     </div>
                     <div
                       className={`flex items-center gap-2 px-3 py-1 rounded-full ${statusBgColor}`}

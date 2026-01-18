@@ -6,11 +6,13 @@ import { useEffect } from "react";
 import handleAddToCart from "../utils/handleAddToCart";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../Store/authStore";
+import { useCartStore } from "../Store/CartStore";
 
 const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [wishlist, setWishlist] = useState([]);
   const { user } = useAuthStore();
+  const { cart, getCart } = useCartStore();
   const { getAllProduct, allProduct: products } = useProductStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,6 +22,7 @@ const ProductsPage = () => {
     const FetchProducts = async () => {
       try {
         await getAllProduct();
+        await getCart(user?._id);
       } catch (error) {
         console.log("Error", error);
       }
@@ -105,7 +108,7 @@ const ProductsPage = () => {
 
   const toggleWishlist = (id) => {
     setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
@@ -168,65 +171,71 @@ const ProductsPage = () => {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="group">
-              {/* Image Container */}
-              <div className="relative aspect-square overflow-hidden mb-4 bg-gray-50">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-
-                {/* Wishlist Button */}
-                <button
-                  onClick={() => toggleWishlist(product.id)}
-                  className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full transition-opacity hover:bg-white"
-                >
-                  <Heart
-                    size={20}
-                    className={
-                      wishlist.includes(product.id)
-                        ? "text-red-500 fill-red-500"
-                        : "text-gray-600"
-                    }
+          {filteredProducts.map((product) => {
+            let selectedCart;
+            selectedCart = cart.some(
+              (cart) => cart?.product?._id === product?._id,
+            );
+            return (
+              <div key={product.id} className="group">
+                {/* Image Container */}
+                <div className="relative aspect-square overflow-hidden mb-4 bg-gray-50">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                </button>
 
-                {/* Quick Add to Cart */}
-                <button
-                  onClick={() =>
-                    handleAddToCart(pathname, navigate, {
-                      product: product?._id,
-                      user: user?._id,
-                    })
-                  }
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white px-6 py-2 text-sm hover:bg-gray-800"
-                >
-                  Add to Cart
-                </button>
-              </div>
+                  {/* Wishlist Button */}
+                  <button
+                    onClick={() => toggleWishlist(product.id)}
+                    className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full transition-opacity hover:bg-white"
+                  >
+                    <Heart
+                      size={20}
+                      className={
+                        wishlist.includes(product.id)
+                          ? "text-red-500 fill-red-500"
+                          : "text-gray-600"
+                      }
+                    />
+                  </button>
 
-              {/* Product Info */}
-              <div>
-                <h3 className="font-light text-gray-900 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-2">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-900">
-                    ${product.price.toLocaleString()}
-                  </span>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span className="mr-1">★</span>
-                    {product.rating}
+                  {/* Quick Add to Cart */}
+                  <button
+                    onClick={() =>
+                      handleAddToCart(pathname, navigate, {
+                        product: product?._id,
+                        user: user?._id,
+                      })
+                    }
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white px-6 py-2 text-sm hover:bg-gray-800"
+                  >
+                    {selectedCart ? "Added" : "Add to Cart"}
+                  </button>
+                </div>
+
+                {/* Product Info */}
+                <div>
+                  <h3 className="font-light text-gray-900 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {product.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-900">
+                      ${product.price.toLocaleString()}
+                    </span>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span className="mr-1">★</span>
+                      {product.rating}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Empty State */}

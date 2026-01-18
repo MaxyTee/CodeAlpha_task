@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Search, Heart, ShoppingBag, User, Moon, Sun } from "lucide-react";
+import {
+  Search,
+  Heart,
+  ShoppingBag,
+  User,
+  Moon,
+  Sun,
+  Menu,
+  X,
+} from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useCartStore } from "../Store/CartStore";
 
 const Header = ({ darkMode, toggleDarkMode }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cart } = useCartStore();
   const navigate = useNavigate();
 
@@ -39,6 +48,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    position: "relative",
   };
 
   const searchStyle = {
@@ -53,148 +63,327 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   };
 
   return (
-    <header style={headerStyle}>
-      <div style={containerStyle}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <h1
+    <>
+      <header style={headerStyle}>
+        <div style={containerStyle}>
+          {/* Mobile Menu Toggle Button - Hidden on desktop */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              letterSpacing: "0.3em",
+              display: "none",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
               color: darkMode ? "#ffffff" : "#161513",
+              padding: "8px",
             }}
+            className="mobile-menu-toggle"
+            aria-label="Toggle menu"
           >
-            LUXE
-          </h1>
-          <span
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          <div
             style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.4em",
-              textTransform: "uppercase",
-              opacity: 0.6,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            Fine Jewelry
-          </span>
-        </div>
-
-        <nav
-          style={{ display: "flex", gap: "32px", alignItems: "center" }}
-          className="lg-display"
-        >
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.path}
-              className="nav-link"
-              style={{ fontWeight: 500 }}
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-          <div style={searchStyle} className="md-display">
-            <Search size={20} style={{ opacity: 0.5 }} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+            <h1
               style={{
-                backgroundColor: "transparent",
-                border: "none",
-                outline: "none",
-                fontSize: "0.875rem",
-                marginLeft: "8px",
-                width: "128px",
-                color: darkMode ? "#e5e5e5" : "#2a2a2a",
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                letterSpacing: "0.3em",
+                color: darkMode ? "#ffffff" : "#161513",
               }}
-            />
-          </div>
-
-          <button
-            onClick={toggleDarkMode}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: darkMode ? "#a69059" : "inherit",
-              transition: "color 0.3s",
-            }}
-          >
-            {darkMode ? <Sun size={24} /> : <Moon size={24} />}
-          </button>
-
-          <button
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: "inherit",
-              transition: "color 0.3s",
-            }}
-          >
-            <Heart size={24} />
-          </button>
-
-          {/* Cart */}
-          <button
-            onClick={() => navigate("/cart")}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: "inherit",
-              transition: "color 0.3s",
-              position: "relative",
-            }}
-          >
-            <ShoppingBag size={24} />
+            >
+              LUXE
+            </h1>
             <span
               style={{
-                position: "absolute",
-                top: "-4px",
-                right: "-4px",
-                backgroundColor: "#a69059",
-                color: "white",
-                fontSize: "10px",
+                fontSize: "0.6rem",
+                letterSpacing: "0.4em",
+                textTransform: "uppercase",
+                opacity: 0.6,
+              }}
+              className="logo-subtitle"
+            >
+              Fine Jewelry
+            </span>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav
+            style={{ display: "flex", gap: "32px", alignItems: "center" }}
+            className="lg-display desktop-nav"
+          >
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.label}
+                to={link.path}
+                className="nav-link"
+                style={{ fontWeight: 500 }}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+            {/* Desktop Search */}
+
+            {/* Mobile Search Button */}
+
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: darkMode ? "#a69059" : "inherit",
+                transition: "color 0.3s",
+              }}
+              className="theme-toggle"
+            >
+              {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+
+            {/* Cart */}
+            <button
+              onClick={() => navigate("/cart")}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "inherit",
+                transition: "color 0.3s",
+                position: "relative",
+              }}
+              className="cart-button"
+            >
+              <ShoppingBag size={24} />
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-4px",
+                  right: "-4px",
+                  backgroundColor: "#a69059",
+                  color: "white",
+                  fontSize: "10px",
+                  borderRadius: "50%",
+                  width: "16px",
+                  height: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                className="cart-badge"
+              >
+                {cart.length}
+              </span>
+            </button>
+
+            {/* User Avatar */}
+            <div
+              onClick={() => navigate("/login")}
+              style={{
+                width: "32px",
+                height: "32px",
                 borderRadius: "50%",
-                width: "16px",
-                height: "16px",
+                backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAN8xKh6LPmRR4Ps_OIyaf55SBKy6ek_yKegqxWO4yga1Tj4ekE8BMKRp7uO_xc2N5WcDnzaJ-QwLZyYr5YKiIhNvi9OAt8aVbVi9ZmQ7GRIEVN2c_9VVVaPfDxkPRSOxSbDvIVbVs6vAlYne5R2yMHaiUY82sI66qtbNEyeGQYtDMDYYTqwnbeyQWzIiIKFKMFtoOs1PD4iIW2nOxTOs2ESkH5Ln8dEqRQHVXc4gh3PNDtWYneJuRKuiI3gQVP3rXGiicj5mGswNYl')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                border: "1px solid rgba(166, 144, 89, 0.2)",
+              }}
+              className="user-avatar"
+              aria-label="User profile"
+            />
+          </div>
+        </div>
+      </header>
+
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: "90px",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: darkMode ? "#1f1f1f" : "#fcfbf8",
+            zIndex: 40,
+            display: "none",
+            flexDirection: "column",
+            padding: "32px 24px",
+          }}
+          className="mobile-menu-overlay"
+        >
+          <nav
+            style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+          >
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.label}
+                to={link.path}
+                className="nav-link"
+                style={{
+                  fontWeight: 500,
+                  fontSize: "1.25rem",
+                  padding: "12px 0",
+                  color: darkMode ? "#ffffff" : "#161513",
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+          <div
+            style={{
+              marginTop: "auto",
+              paddingTop: "32px",
+              borderTop: "1px solid rgba(166, 144, 89, 0.1)",
+            }}
+          >
+            <button
+              onClick={() => {
+                navigate("/login");
+                setMobileMenuOpen(false);
+              }}
+              style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                gap: "12px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: darkMode ? "#ffffff" : "#161513",
+                fontSize: "1rem",
+                padding: "16px 0",
               }}
             >
-              {cart.length}
-            </span>
-          </button>
-
-          {/* User Avatar */}
-          <div
-            onClick={() => navigate("/login")}
-            style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAN8xKh6LPmRR4Ps_OIyaf55SBKy6ek_yKegqxWO4yga1Tj4ekE8BMKRp7uO_xc2N5WcDnzaJ-QwLZyYr5YKiIhNvi9OAt8aVbVi9ZmQ7GRIEVN2c_9VVVaPfDxkPRSOxSbDvIVbVs6vAlYne5R2yMHaiUY82sI66qtbNEyeGQYtDMDYYTqwnbeyQWzIiIKFKMFtoOs1PD4iIW2nOxTOs2ESkH5Ln8dEqRQHVXc4gh3PNDtWYneJuRKuiI3gQVP3rXGiicj5mGswNYl')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              border: "1px solid rgba(166, 144, 89, 0.2)",
-            }}
-            aria-label="User profile"
-          />
+              <User size={20} />
+              <span>Sign In</span>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+
+      <style>{`
+        /* Responsive CSS */
+        @media (max-width: 1024px) {
+          .lg-display {
+            display: none !important;
+          }
+          
+          .mobile-menu-toggle {
+            display: block !important;
+          }
+          
+          .mobile-menu-overlay {
+            display: flex !important;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .md-display {
+            display: none !important;
+          }
+          
+          .mobile-search-button {
+            display: block !important;
+          }
+          
+          .mobile-search-bar {
+            display: block !important;
+          }
+          
+          .containerStyle {
+            padding: 0 16px !important;
+          }
+          
+          .logo-subtitle {
+            font-size: 0.5rem !important;
+            letter-spacing: 0.3em !important;
+          }
+          
+          h1 {
+            font-size: 1.3rem !important;
+            letter-spacing: 0.2em !important;
+          }
+          
+          .theme-toggle,
+          .wishlist-button,
+          .cart-button,
+          .user-avatar {
+            margin-left: 4px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          header {
+            height: 70px !important;
+          }
+          
+          h1 {
+            font-size: 1.2rem !important;
+            letter-spacing: 0.15em !important;
+          }
+          
+          .logo-subtitle {
+            display: none !important;
+          }
+          
+          .user-avatar {
+            width: 28px !important;
+            height: 28px !important;
+          }
+          
+          .cart-badge {
+            width: 14px !important;
+            height: 14px !important;
+            font-size: 9px !important;
+          }
+          
+          .theme-toggle svg,
+          .wishlist-button svg,
+          .cart-button svg,
+          .mobile-search-button svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
+        }
+        
+        @media (max-width: 360px) {
+          .containerStyle {
+            padding: 0 12px !important;
+          }
+          
+          h1 {
+            font-size: 1.1rem !important;
+          }
+        }
+        
+        /* Ensure proper spacing for mobile */
+        .mobile-menu-toggle,
+        .mobile-search-button,
+        .theme-toggle,
+        .wishlist-button,
+        .cart-button {
+          min-width: 44px;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        /* Prevent body scroll when mobile menu is open */
+        body.mobile-menu-open {
+          overflow: hidden;
+        }
+      `}</style>
+    </>
   );
 };
 

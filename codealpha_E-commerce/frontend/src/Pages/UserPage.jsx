@@ -17,10 +17,12 @@ import AddressPage from "./UserPages/AddressPage";
 import { useAuthStore } from "../Store/authStore";
 import { useOrderStore } from "../Store/OrderStore";
 import formatDate from "../utils/FormatDate";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const { userOrders, getUserOrder } = useOrderStore();
+  const navigate = useNavigate();
   console.log(userOrders);
 
   useEffect(() => {
@@ -36,11 +38,19 @@ const UserPage = () => {
 
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Mock user data
+  const handleLogout = async () => {
+    try {
+      navigate("/login");
+      await logout();
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   const userData = {
-    name: "Alexandra Morgan",
-    email: "alexandra@example.com",
-    memberSince: "March 2023",
+    name: user.name,
+    email: user.email,
+    memberSince: formatDate(user.createdAt),
     totalOrders: userOrders.length,
     totalSpent: 12045,
     loyaltyPoints: 1240,
@@ -111,9 +121,9 @@ const UserPage = () => {
     },
     { id: "wishlist", label: "Wishlist", icon: Heart },
     { id: "addresses", label: "Addresses", icon: MapPin },
-    { id: "payments", label: "Payment Methods", icon: CreditCard },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "settings", label: "Account Settings", icon: Settings },
+    // { id: "payments", label: "Payment Methods", icon: CreditCard },
+    // { id: "notifications", label: "Notifications", icon: Bell },
+    // { id: "settings", label: "Account Settings", icon: Settings },
     { id: "loyalty", label: "Loyalty Program", icon: Award },
   ];
 
@@ -128,7 +138,7 @@ const UserPage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-white p-6 rounded-lg  shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 bg-amber-50 rounded-lg">
                     <Package className="text-amber-600" size={20} />
@@ -143,7 +153,7 @@ const UserPage = () => {
                 <p className="text-xs text-gray-500">Lifetime orders</p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-white p-6 rounded-lg  shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 bg-amber-50 rounded-lg">
                     <CreditCard className="text-amber-600" size={20} />
@@ -158,7 +168,7 @@ const UserPage = () => {
                 <p className="text-xs text-gray-500">Lifetime spending</p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-white p-6 rounded-lg  shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 bg-amber-50 rounded-lg">
                     <Award className="text-amber-600" size={20} />
@@ -229,7 +239,7 @@ const UserPage = () => {
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               My Orders
             </h2>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 text-center">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 text-center mb-6">
               <Package className="mx-auto text-gray-300 mb-4" size={48} />
               <p className="text-gray-600 mb-2">
                 You have {userData.totalOrders} orders
@@ -237,6 +247,40 @@ const UserPage = () => {
               <p className="text-sm text-gray-500">
                 All your orders will appear here
               </p>
+            </div>
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div
+                  key={order._id}
+                  className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-amber-50 rounded">
+                      <Package size={18} className="text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.trackingId} • {formatDate(order.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">
+                      ${order.totalAmount.toLocaleString()}
+                    </p>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        order.status === "Delivered"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         );
@@ -346,7 +390,7 @@ const UserPage = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 pt-24 pb-12">
+      <div className="max-w-full mx-auto px-4 pt-24 pb-12">
         {/* Welcome Banner */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
@@ -355,8 +399,8 @@ const UserPage = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+          <div className="lg:w-72 flex-shrink-0">
+            <div className="bg-white rounded-lg  shadow-lg p-6 mb-6">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
                   <User className="text-amber-600" size={24} />
@@ -370,7 +414,7 @@ const UserPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-lg shadow-lg">
               <nav className="p-4">
                 <ul className="space-y-2">
                   {sidebarItems.map((item) => {
@@ -405,7 +449,10 @@ const UserPage = () => {
               </nav>
 
               <div className="p-4 border-t border-gray-200">
-                <button className="w-full flex items-center justify-center gap-2 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <button
+                  onClick={() => handleLogout()}
+                  className="w-full flex items-center justify-center gap-2 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
                   <LogOut size={20} />
                   <span className="font-medium">Sign Out</span>
                 </button>
@@ -415,7 +462,7 @@ const UserPage = () => {
 
           {/* Main Content */}
           <div className="flex-1">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <div className="bg-white rounded-lg  shadow-lg p-6">
               {renderContent()}
             </div>
           </div>

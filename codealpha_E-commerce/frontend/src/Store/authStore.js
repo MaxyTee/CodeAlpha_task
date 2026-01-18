@@ -130,13 +130,14 @@ export const useAuthStore = create((set) => ({
     try {
       const response = await axios.post(`${API_URL}/logout`);
       if (!response.data.success) {
-        return;
+        return { success: false };
       }
 
       set({ ...initialState });
+      return { success: true };
     } catch (error) {
       console.log("Error", error);
-      return;
+      return { success: false };
     }
   },
 }));

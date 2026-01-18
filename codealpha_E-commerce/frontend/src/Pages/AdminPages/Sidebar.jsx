@@ -36,38 +36,38 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       path: "/admin/orders",
       count: 18,
     },
-    {
-      icon: Users,
-      label: "Customers",
-      path: "/admin/customers",
-      count: 156,
-    },
-    {
-      icon: BarChart3,
-      label: "Analytics",
-      path: "/admin/analytics",
-    },
+    // {
+    //   icon: Users,
+    //   label: "Customers",
+    //   path: "/admin/customers",
+    //   count: 156,
+    // },
+    // {
+    //   icon: BarChart3,
+    //   label: "Analytics",
+    //   path: "/admin/analytics",
+    // },
     {
       icon: Tag,
       label: "Categories",
       path: "/admin/categories",
     },
-    {
-      icon: Bell,
-      label: "Notifications",
-      path: "/admin/notifications",
-      count: 3,
-    },
-    {
-      icon: TrendingUp,
-      label: "Campaigns",
-      path: "/admin/campaigns",
-    },
-    {
-      icon: Shield,
-      label: "Permissions",
-      path: "/admin/permissions",
-    },
+    // {
+    //   icon: Bell,
+    //   label: "Notifications",
+    //   path: "/admin/notifications",
+    //   count: 3,
+    // },
+    // {
+    //   icon: TrendingUp,
+    //   label: "Campaigns",
+    //   path: "/admin/campaigns",
+    // },
+    // {
+    //   icon: Shield,
+    //   label: "Permissions",
+    //   path: "/admin/permissions",
+    // },
   ];
 
   const settingsItems = [

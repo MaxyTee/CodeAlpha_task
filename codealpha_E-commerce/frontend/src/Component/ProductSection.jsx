@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShoppingBag, Heart, Star, Check } from "lucide-react";
+import { ShoppingBag, Heart, Star, Check, Loader2 } from "lucide-react";
 import { useProductStore } from "../Store/ProductStore";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,13 +14,14 @@ const ProductSection = () => {
   const { getAllProduct, allProduct: products } = useProductStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isAdding, setIsAdding] = useState(null);
   const { pathname } = location;
 
   useEffect(() => {
     const FetchProduct = async () => {
       try {
         await getAllProduct();
-        await getCart(user._id);
+        await getCart(user?._id);
       } catch (error) {
         console.log("Error", error);
       }
@@ -35,7 +36,7 @@ const ProductSection = () => {
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
+        : [...prev, productId],
     );
   };
 
@@ -101,7 +102,9 @@ const ProductSection = () => {
       <div style={gridStyle}>
         {products.map((product) => {
           let selectedCart;
-          selectedCart = cart.some((cart) => cart.product._id === product?._id);
+          selectedCart = cart.some(
+            (cart) => cart?.product?._id === product?._id,
+          );
 
           return (
             <div
@@ -169,7 +172,7 @@ const ProductSection = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = wishlist.includes(
-                    product._id
+                    product._id,
                   )
                     ? "#fee2e2"
                     : "#f8f8f8";
@@ -371,14 +374,18 @@ const ProductSection = () => {
                     (e.currentTarget.style.backgroundColor = "#a69059")
                   }
                   onClick={() => {
+                    setIsAdding(product?._id);
                     handleAddToCart(pathname, navigate, {
                       product: product?._id,
                       user: user?._id,
                     });
+                    setIsAdding(null);
                   }}
                 >
                   <ShoppingBag size={18} />
-                  {selectedCart ? "Added" : "Add to Cart"}
+                  {selectedCart
+                    ? "Added"
+                    : `${isAdding === product?._id ? <Loader2 /> : "Add to Cart"}`}
                   {/* Add to Cart */}
                 </button>
               </div>

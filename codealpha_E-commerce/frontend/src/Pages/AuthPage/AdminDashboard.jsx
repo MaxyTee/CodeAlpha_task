@@ -17,10 +17,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useProductStore } from "../../Store/ProductStore";
 import { useOrderStore } from "../../Store/OrderStore";
+import formatDate from "../../utils/FormatDate";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { getAllProduct, allProduct: topProducts } = useProductStore();
+
   const { getAllOrders, AllOrders: recentOrders } = useOrderStore();
 
   useEffect(() => {
@@ -31,10 +33,15 @@ const DashboardPage = () => {
     FetchProduct();
   }, []);
 
+  const totalRevenue = recentOrders.reduce(
+    (sum, order) => sum + order.totalAmount,
+    0,
+  );
+
   const stats = [
     {
       title: "Total Revenue",
-      value: "$42,580",
+      value: `$${totalRevenue}`,
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-100",
@@ -155,7 +162,7 @@ const DashboardPage = () => {
                         {order.status}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {order.createdAt}
+                        {formatDate(order.createdAt)}
                       </span>
                     </div>
                   </div>

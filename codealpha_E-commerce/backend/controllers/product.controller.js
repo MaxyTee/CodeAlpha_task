@@ -2,6 +2,7 @@ import express from "express";
 import slugify from "slugify";
 import { Product } from "../models/product.model.js";
 import cloudinary from "../cloudinary/cloudinary.config.js";
+import { Cart } from "../models/cart.model.js";
 
 export const createProduct = async (req, res) => {
   const {
@@ -36,7 +37,7 @@ export const createProduct = async (req, res) => {
     const imageUrls = [];
     for (const file of req.files) {
       const result = await cloudinary.uploader.upload(
-        `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+        `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
       );
       imageUrls.push(result.secure_url);
     }
@@ -118,7 +119,7 @@ export const updateProduct = async (req, res) => {
       { $set: update },
       {
         new: true,
-      }
+      },
     );
     if (!product) {
       return res
@@ -146,9 +147,13 @@ export const deleteProduct = async (req, res) => {
         .json({ success: false, message: "Product not found" });
     }
 
+    await Cart.updateMany(
+      { "items.product": productId },
+      { $pull: { items: { product: productId } } },
+    );
+
     return res.status(200).json({ success: true, message: "Product Deleted" });
   } catch (error) {
     console.log("Error", error.message);
   }
 };
-

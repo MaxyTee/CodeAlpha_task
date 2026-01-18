@@ -24,16 +24,18 @@ import { useAuthStore } from "../Store/authStore";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
 import { useOrderStore } from "../Store/OrderStore";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const { cart, getCart, removeFromCart, increaseProductQuantity } =
+  const { cart, getCart, removeFromCart, increaseProductQuantity, clearCart } =
     useCartStore();
   const { createOrder } = useOrderStore();
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("");
   const [isOrdering, setIsOrdering] = useState(false);
+  const navigate = useNavigate();
 
   const { user } = useAuthStore();
 
@@ -82,6 +84,7 @@ const CartPage = () => {
       };
 
       await createOrder(payload);
+      await clearCart(user._id);
       setIsOrdering(false);
       setShowCheckout(false);
       // const cart = [];
@@ -104,7 +107,7 @@ const CartPage = () => {
   // Calculate totals
   const subtotal = cart.reduce(
     (sum, item) => sum + item?.product?.price * item.quantity,
-    0
+    0,
   );
   const shipping = subtotal > 1000 ? 0 : 25;
   const tax = subtotal * 0.08; // 8% tax
@@ -113,7 +116,7 @@ const CartPage = () => {
     (sum, item) =>
       sum +
       (item?.product?.originalPrice - item?.product.price) * item.quantity,
-    0
+    0,
   );
 
   const updateQuantity = async (productId, newQuantity) => {
@@ -124,11 +127,11 @@ const CartPage = () => {
   };
 
   const removeItem = async (id) => {
-    setIsDeleting(true);
+    setIsDeleting(id);
     try {
       const payload = { product: id, user: user._id };
       await removeFromCart(payload);
-      setIsDeleting(false);
+      setIsDeleting(null);
     } catch (error) {
       console.log("Error", error);
     }
@@ -233,7 +236,7 @@ const CartPage = () => {
                         onClick={() => removeItem(item.product._id)}
                         className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                       >
-                        {isDeleting ? (
+                        {isDeleting === item.product._id ? (
                           <Loader2 size={16} className="animate-spin" />
                         ) : (
                           <Trash2 size={20} className="text-red-500" />
@@ -250,7 +253,7 @@ const CartPage = () => {
                             onClick={() =>
                               updateQuantity(
                                 item.product._id,
-                                item.quantity - 1
+                                item.quantity - 1,
                               )
                             }
                             className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
@@ -264,7 +267,7 @@ const CartPage = () => {
                             onClick={() =>
                               updateQuantity(
                                 item.product._id,
-                                item.quantity + 1
+                                item.quantity + 1,
                               )
                             }
                             className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50"
@@ -336,7 +339,10 @@ const CartPage = () => {
                   Add exquisite jewelry pieces to your bag and they'll appear
                   here
                 </p>
-                <button className="inline-flex items-center gap-2 bg-[#a69059] text-white px-6 py-3 rounded-xl hover:bg-[#a69059]/90 transition-colors">
+                <button
+                  onClick={() => navigate("/allProductPage")}
+                  className="inline-flex items-center gap-2 bg-[#a69059] text-white px-6 py-3 rounded-xl hover:bg-[#a69059]/90 transition-colors"
+                >
                   <ShoppingBag size={20} />
                   Start Shopping
                 </button>
@@ -479,7 +485,7 @@ const CartPage = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full">
             {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b">
+            <div className="flex justify-between items-center p-6 shadow-md">
               <h2 className="text-xl font-bold">Checkout</h2>
               <button
                 onClick={() => setShowCheckout(false)}
@@ -502,7 +508,7 @@ const CartPage = () => {
                     <div
                       key={index}
                       onClick={() => setSelectedAddress(address)}
-                      className={`p-3 border rounded cursor-pointer ${
+                      className={`p-3 shadow rounded cursor-pointer ${
                         selectedAddress === address
                           ? "border-[#a69059] bg-[#a69059]/5"
                           : "border-gray-300"
@@ -534,7 +540,7 @@ const CartPage = () => {
                     <div
                       key={payment.id}
                       onClick={() => setSelectedPayment(payment.id)}
-                      className={`p-3 border rounded cursor-pointer ${
+                      className={`p-3 shadow rounded cursor-pointer ${
                         selectedPayment === payment.id
                           ? "border-[#a69059] bg-[#a69059]/5"
                           : "border-gray-300"
