@@ -37,7 +37,7 @@ function EcommerceApp() {
           }}
         ></div>
         <Categories />
-        <ProductSection />
+        <ProductSection darkMode={darkMode} />
         <BrandStatement />
       </main>
       <Footer />

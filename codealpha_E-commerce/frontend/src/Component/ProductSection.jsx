@@ -7,7 +7,7 @@ import { useAuthStore } from "../Store/authStore";
 import handleAddToCart from "../utils/handleAddToCart";
 import { useCartStore } from "../Store/CartStore";
 
-const ProductSection = () => {
+const ProductSection = ({ darkMode }) => {
   const [wishlist, setWishlist] = useState([]);
   const { user } = useAuthStore();
   const { cart, getCart } = useCartStore();
@@ -83,7 +83,7 @@ const ProductSection = () => {
             fontSize: "2.25rem",
             fontWeight: 300,
             marginBottom: "16px",
-            color: "#161513",
+            color: darkMode ? "#ffffff" : "#161513",
           }}
         >
           Exquisite Jewelry
@@ -111,11 +111,15 @@ const ProductSection = () => {
               key={product._id}
               style={{
                 position: "relative",
-                backgroundColor: "white",
+                backgroundColor: darkMode ? "#1f1f1f" : "#fcfbf8",
                 borderRadius: "8px",
                 overflow: "hidden",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                border: "1px solid rgba(166, 144, 89, 0.1)",
+                boxShadow: darkMode
+                  ? "0 25px 50px -12px rgba(224, 183, 183, 0.25)"
+                  : "0 4px 12px rgba(0, 0, 0, 0.05)",
+                border: darkMode
+                  ? "2px solid rgba(166, 144, 89, 0.1)"
+                  : "1px solid rgba(218, 169, 45, 0.1)",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
               onMouseEnter={(e) => {
@@ -233,7 +237,7 @@ const ProductSection = () => {
                   style={{
                     fontSize: "1.125rem",
                     fontWeight: 600,
-                    color: "#161513",
+                    color: darkMode ? "#ffffff" : "#161513",
                     marginBottom: "8px",
                     lineHeight: 1.4,
                   }}
@@ -309,7 +313,7 @@ const ProductSection = () => {
                         style={{
                           fontSize: "1.25rem",
                           fontWeight: "bold",
-                          color: "#161513",
+                          color: darkMode ? "#ffffff" : "#161513",
                         }}
                       >
                         ${product.price.toLocaleString()}
