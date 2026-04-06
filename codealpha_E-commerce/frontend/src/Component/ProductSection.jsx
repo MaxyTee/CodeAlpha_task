@@ -17,6 +17,8 @@ const ProductSection = () => {
   const [isAdding, setIsAdding] = useState(null);
   const { pathname } = location;
 
+  console.log(user);
+
   useEffect(() => {
     const FetchProduct = async () => {
       try {
@@ -29,8 +31,6 @@ const ProductSection = () => {
 
     FetchProduct();
   }, []);
-
-  useEffect(() => {});
 
   const toggleWishlist = (productId) => {
     setWishlist((prev) =>
@@ -379,13 +379,17 @@ const ProductSection = () => {
                       product: product?._id,
                       user: user?._id,
                     });
-                    setIsAdding(null);
                   }}
+                  disabled={isAdding}
                 >
                   <ShoppingBag size={18} />
-                  {selectedCart
-                    ? "Added"
-                    : `${isAdding === product?._id ? <Loader2 /> : "Add to Cart"}`}
+                  {selectedCart ? (
+                    "Added"
+                  ) : isAdding === product._id ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    "Add to Cart"
+                  )}
                   {/* Add to Cart */}
                 </button>
               </div>

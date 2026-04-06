@@ -11,10 +11,15 @@ import {
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useCartStore } from "../Store/CartStore";
+import handleCart from "../utils/handleCart";
+import { useAuthStore } from "../Store/authStore";
 
 const Header = ({ darkMode, toggleDarkMode }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cart } = useCartStore();
+  const { user } = useAuthStore();
+  console.log(user);
+
   const navigate = useNavigate();
 
   const navLinks = [
@@ -151,7 +156,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
 
             {/* Cart */}
             <button
-              onClick={() => navigate("/cart")}
+              onClick={() => handleCart(navigate, user)}
               style={{
                 background: "none",
                 border: "none",

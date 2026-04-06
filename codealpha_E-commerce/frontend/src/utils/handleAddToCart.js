@@ -3,7 +3,7 @@ import { useCartStore } from "../Store/CartStore";
 const handleAddToCart = async (
   location,
   navigate,
-  { user, product, quantity = 1, size = "small" }
+  { user, product, quantity = 1, size = "small" },
 ) => {
   const addToCart = useCartStore.getState().addToCart;
   if (!user) {

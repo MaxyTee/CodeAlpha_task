@@ -53,8 +53,6 @@ const CartPage = () => {
     FetchCart();
   }, []);
 
-  console.log(cart);
-
   const handleOrder = async () => {
     if (!selectedAddress) {
       alert("Please select a shipping address");
@@ -504,7 +502,7 @@ const CartPage = () => {
                   Shipping Address
                 </h3>
                 <div className="space-y-2">
-                  {addresses.map((address, index) => (
+                  {addresses?.map((address, index) => (
                     <div
                       key={index}
                       onClick={() => setSelectedAddress(address)}
