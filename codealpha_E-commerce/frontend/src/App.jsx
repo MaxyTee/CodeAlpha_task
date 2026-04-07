@@ -24,20 +24,60 @@ import SingleProductPage from "./Pages/SingleProductPage";
 import OrderListPage from "./Pages/OrderListPage";
 import AdminDashboard from "./Pages/AuthPage/AdminDashboard";
 import ProductsPage from "./Pages/AllProductPage";
+import { useState } from "react";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  };
+
   const Router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />}>
-        <Route index element={<EcommerceApp />} />
-        <Route path="about" element={<AboutPage />} />
-        <Route path="contact" element={<ContactPageApp />} />
+        <Route
+          index
+          element={
+            <EcommerceApp darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          }
+        />
+        <Route
+          path="about"
+          element={
+            <AboutPage darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          }
+        />
+        <Route
+          path="contact"
+          element={
+            <ContactPageApp
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+            />
+          }
+        />
         <Route path="login" element={<LoginPage />} />
         <Route path="admin-login" element={<AdminLogin />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="user-page" element={<UserPage />} />
-        <Route path="cart" element={<CartPage />} />
-        <Route path="allProductPage" element={<ProductsPage />} />
+        <Route
+          path="cart"
+          element={
+            <CartPage darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          }
+        />
+        <Route
+          path="allProductPage"
+          element={
+            <ProductsPage darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          }
+        />
         <Route
           path="single-product-page/:slug"
           element={<SingleProductPage />}
@@ -48,8 +88,8 @@ function App() {
         <Route path="admin/products" element={<ProductPage />} />
         <Route path="admin/orders" element={<OrderPage />} />
         <Route path="admin/settings" element={<SettingPage />} />
-      </Route>
-    )
+      </Route>,
+    ),
   );
   return (
     <>

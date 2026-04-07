@@ -31,12 +31,15 @@ const LoginPage = () => {
         navigate("/admin/dashboard");
         setIsLoading(false);
       } else {
-        await userLogin(payload);
-        console.log(location.state);
-        if (location.state) {
-          return navigate(location.state?.from);
+        const response = await userLogin(payload);
+
+        if (response) {
+          console.log(location.state);
+          if (location.state) {
+            return navigate(location.state?.from);
+          }
+          navigate("/user-page");
         }
-        navigate("/user-page");
         setIsLoading(false);
       }
     } catch (error) {

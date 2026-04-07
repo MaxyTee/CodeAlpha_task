@@ -1,9 +1,11 @@
 import React from "react";
 import { CreditCard, Banknote } from "lucide-react";
 
-const Footer = () => {
+const Footer = ({ darkMode }) => {
   const footerStyle = {
-    backgroundColor: "#fcfbf8",
+    backgroundColor: darkMode
+      ? "rgba(31, 31, 31, 0.8)"
+      : "rgba(252, 251, 248, 0.8)",
     padding: "64px 0",
     borderTop: "1px solid rgba(166, 144, 89, 0.1)",
   };
@@ -40,7 +42,7 @@ const Footer = () => {
               fontSize: "1.25rem",
               fontWeight: "bold",
               letterSpacing: "0.3em",
-              color: "#161513",
+              color: darkMode ? "#fff" : "#161513",
             }}
           >
             LUXE

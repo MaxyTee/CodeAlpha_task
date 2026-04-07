@@ -1,6 +1,6 @@
 import React from "react";
 
-const Categories = () => {
+const Categories = ({ darkMode }) => {
   const categories = [
     {
       name: "Rings",
@@ -139,7 +139,7 @@ const Categories = () => {
               </div>
               <p
                 style={{
-                  color: "#161513",
+                  color: darkMode ? "#a69059" : "#161513",
                   fontSize: "1.125rem",
                   fontWeight: 500,
                   letterSpacing: "0.025em",

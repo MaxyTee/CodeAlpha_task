@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Header from "../Component/Header";
 import Hero from "../Component/HeroSection";
 import Categories from "../Component/CategorySection";
@@ -6,18 +5,7 @@ import BrandStatement from "../Component/BrandStatement";
 import Footer from "../Component/Footer";
 import ProductSection from "../Component/ProductSection";
 
-function EcommerceApp() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (!darkMode) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-  };
-
+function EcommerceApp({ darkMode, toggleDarkMode }) {
   return (
     <div
       style={{
@@ -36,11 +24,11 @@ function EcommerceApp() {
             backgroundColor: darkMode ? "#1f1f1f" : "#fcfbf8",
           }}
         ></div>
-        <Categories />
+        <Categories darkMode={darkMode} />
         <ProductSection darkMode={darkMode} />
-        <BrandStatement />
+        <BrandStatement darkMode={darkMode} />
       </main>
-      <Footer />
+      <Footer darkMode={darkMode} />
     </div>
   );
 }

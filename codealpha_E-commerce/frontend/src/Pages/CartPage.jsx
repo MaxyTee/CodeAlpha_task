@@ -26,7 +26,7 @@ import Footer from "../Component/Footer";
 import { useOrderStore } from "../Store/OrderStore";
 import { useNavigate } from "react-router-dom";
 
-const CartPage = () => {
+const CartPage = ({ darkMode, toggleDarkMode }) => {
   const { cart, getCart, removeFromCart, increaseProductQuantity, clearCart } =
     useCartStore();
   const { createOrder } = useOrderStore();
@@ -148,7 +148,7 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 mt-16">
@@ -584,6 +584,7 @@ const CartPage = () => {
           </div>
         </div>
       )}
+      <Footer darkMode={darkMode} />
     </div>
   );
 };

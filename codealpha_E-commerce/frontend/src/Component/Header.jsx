@@ -56,16 +56,16 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     position: "relative",
   };
 
-  const searchStyle = {
-    display: "flex",
-    alignItems: "center",
-    backgroundColor: darkMode
-      ? "rgba(255, 255, 255, 0.05)"
-      : "rgba(166, 144, 89, 0.05)",
-    padding: "6px 12px",
-    borderRadius: "2px",
-    border: "1px solid rgba(166, 144, 89, 0.1)",
-  };
+  // const searchStyle = {
+  //   display: "flex",
+  //   alignItems: "center",
+  //   backgroundColor: darkMode
+  //     ? "rgba(255, 255, 255, 0.05)"
+  //     : "rgba(166, 144, 89, 0.05)",
+  //   padding: "6px 12px",
+  //   borderRadius: "2px",
+  //   border: "1px solid rgba(166, 144, 89, 0.1)",
+  // };
 
   return (
     <>

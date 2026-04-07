@@ -7,8 +7,9 @@ import handleAddToCart from "../utils/handleAddToCart";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../Store/authStore";
 import { useCartStore } from "../Store/CartStore";
+import Footer from "../Component/Footer";
 
-const ProductsPage = () => {
+const ProductsPage = ({ darkMode, toggleDarkMode }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [wishlist, setWishlist] = useState([]);
   const { user } = useAuthStore();
@@ -30,69 +31,6 @@ const ProductsPage = () => {
     FetchProducts();
   }, []);
 
-  //   const products = [
-  //     {
-  //       id: "1",
-  //       name: "Éternité Diamond Ring",
-  //       description: "18k gold ring with brilliant-cut diamond",
-  //       price: 1899,
-  //       image:
-  //         "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&auto=format&fit=crop",
-  //       category: "Rings",
-  //       rating: 4.8,
-  //     },
-  //     {
-  //       id: "2",
-  //       name: "Celestial Pearl Earrings",
-  //       description: "South Sea pearls set in 14k yellow gold",
-  //       price: 895,
-  //       image:
-  //         "https://images.unsplash.com/photo-1594576722512-582d5577dd56?w=600&auto=format&fit=crop",
-  //       category: "Earrings",
-  //       rating: 4.5,
-  //     },
-  //     {
-  //       id: "3",
-  //       name: "Infinity Pendant Necklace",
-  //       description: "Diamond infinity pendant on gold chain",
-  //       price: 1650,
-  //       image:
-  //         "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=600&auto=format&fit=crop",
-  //       category: "Necklaces",
-  //       rating: 4.9,
-  //     },
-  //     {
-  //       id: "4",
-  //       name: "Minimalist Gold Cuff",
-  //       description: "18k gold structured cuff bracelet",
-  //       price: 1250,
-  //       image:
-  //         "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&auto=format&fit=crop",
-  //       category: "Bracelets",
-  //       rating: 4.7,
-  //     },
-  //     {
-  //       id: "5",
-  //       name: "Art Deco Ring",
-  //       description: "Vintage-inspired emerald cut diamond",
-  //       price: 3200,
-  //       image:
-  //         "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&auto=format&fit=crop",
-  //       category: "Rings",
-  //       rating: 5.0,
-  //     },
-  //     {
-  //       id: "6",
-  //       name: "Sapphire Pendant",
-  //       description: "Blue sapphire pendant on silver chain",
-  //       price: 750,
-  //       image:
-  //         "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=600&auto=format&fit=crop",
-  //       category: "Necklaces",
-  //       rating: 4.3,
-  //     },
-  //   ];
-
   const categories = [
     { id: "all", name: "All Jewelry" },
     { id: "rings", name: "Rings" },
@@ -113,13 +51,19 @@ const ProductsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
+    <div
+      className={`min-h-screen ${darkMode ? "bg-[#a690590d]" : "bg-[#fcfbf8]"}`}
+    >
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
       {/* Page Header */}
       <div className="max-w-7xl mx-auto px-4 pt-24 pb-12">
-        <h1 className="text-4xl font-light text-gray-900 mb-4">Shop All</h1>
-        <p className="text-gray-600">Timeless pieces crafted with precision</p>
+        <h1
+          className={`text-4xl font-light ${darkMode ? "text-[#e5e5e5]" : "text-[#2a2a2a]"} mb-4`}
+        >
+          Shop All
+        </h1>
+        <p className="text-[#7c786e]">Timeless pieces crafted with precision</p>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 pb-16">
@@ -196,7 +140,7 @@ const ProductsPage = () => {
                       className={
                         wishlist.includes(product.id)
                           ? "text-red-500 fill-red-500"
-                          : "text-gray-600"
+                          : "text-[#7c786e]"
                       }
                     />
                   </button>
@@ -217,14 +161,14 @@ const ProductsPage = () => {
 
                 {/* Product Info */}
                 <div>
-                  <h3 className="font-light text-gray-900 mb-1">
+                  <h3 className="font-light text-[#a69059] mb-1">
                     {product.name}
                   </h3>
                   <p className="text-sm text-gray-500 mb-2">
                     {product.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-900">
+                    <span className="text-[#a69059]">
                       ${product.price.toLocaleString()}
                     </span>
                     <div className="flex items-center text-sm text-gray-500">
@@ -241,15 +185,15 @@ const ProductsPage = () => {
         {/* Empty State */}
         {filteredProducts.length === 0 && (
           <div className="text-center py-16">
-            <h3 className="text-lg font-light text-gray-900 mb-3">
+            <h3 className="text-lg font-light text-[#a69059] mb-3">
               No products found
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-[#7c786e] mb-6">
               Try selecting a different category
             </p>
             <button
               onClick={() => setSelectedCategory("all")}
-              className="text-sm text-gray-600 hover:text-black underline"
+              className="text-sm text-[#7c786e] hover:text-black underline"
             >
               View all products
             </button>
@@ -260,12 +204,13 @@ const ProductsPage = () => {
         {filteredProducts.length > 0 &&
           filteredProducts.length < products.length && (
             <div className="mt-12 text-center">
-              <button className="text-sm text-gray-600 hover:text-black border-b border-transparent hover:border-black pb-1">
+              <button className="text-sm text-[#7c786e] hover:text-black border-b border-transparent hover:border-black pb-1">
                 Load more
               </button>
             </div>
           )}
       </div>
+      <Footer darkMode={darkMode} />
     </div>
   );
 };

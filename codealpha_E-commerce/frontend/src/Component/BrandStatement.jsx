@@ -1,9 +1,9 @@
 import React from "react";
 import { Award } from "lucide-react";
 
-const BrandStatement = () => {
+const BrandStatement = ({ darkMode }) => {
   const sectionStyle = {
-    backgroundColor: "rgba(166, 144, 89, 0.05)",
+    backgroundColor: "#a690590d",
     padding: "96px 0",
   };
 
@@ -34,7 +34,7 @@ const BrandStatement = () => {
         <Award size={40} color="#a69059" style={{ margin: "0 auto 24px" }} />
         <h3
           style={{
-            color: "#161513",
+            color: darkMode ? "#fff" : "#161513",
             fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
             fontWeight: 300,
             lineHeight: 1.2,
