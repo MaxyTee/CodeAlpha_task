@@ -25,7 +25,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       email,
       verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 + 1000,
+      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
     generateTokenAndSetCookie(res, user._id);
@@ -118,6 +118,14 @@ export const userAddresses = async (req, res) => {
   console.log("Email:", email);
 
   try {
+    const user = await User.findOne({ email });
+
+if (!user) {
+  return res.status(404).json({
+    success: false,
+    message: "User not found",
+  });
+}             
     const newAddress = {
       address,
       addressType,
