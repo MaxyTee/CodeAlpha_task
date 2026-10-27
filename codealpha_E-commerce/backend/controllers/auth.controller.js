@@ -115,7 +115,7 @@ export const userAddresses = async (req, res) => {
     default: isDefault,
   } = req.body;
 
-  console.log(email);
+  console.log("Email:", email);
 
   try {
     const newAddress = {
