@@ -25,6 +25,7 @@ const AddressPage = () => {
     addressType: "home",
     country: "United States",
     default: false,
+    email: user.email,
   });
 
   // Initialize addresses from user data
