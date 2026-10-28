@@ -116,6 +116,7 @@ export const userAddresses = async (req, res) => {
   } = req.body;
 
   console.log("Email:", email);
+  console.log("Address:", address);
 
   try {
     const user = await User.findOne({ email });
