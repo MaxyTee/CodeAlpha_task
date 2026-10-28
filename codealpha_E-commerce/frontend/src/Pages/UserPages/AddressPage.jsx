@@ -45,7 +45,7 @@ const AddressPage = () => {
 
     setIsAddingAddress(true);
     try {
-      const payload = { ...newAddress };
+      const payload = { ...newAddress, user.email };
       await userAddress(payload);
       
       // Update local state with the new address
