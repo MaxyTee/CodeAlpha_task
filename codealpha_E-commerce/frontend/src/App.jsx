@@ -29,14 +29,15 @@ import { useState } from "react";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (!darkMode) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-  };
+const toggleDarkMode = () => {
+  setDarkMode((prev) => {
+    const newMode = !prev;
+
+    document.body.classList.toggle("dark", newMode);
+
+    return newMode;
+  });
+};
 
   const Router = createBrowserRouter(
     createRoutesFromElements(
