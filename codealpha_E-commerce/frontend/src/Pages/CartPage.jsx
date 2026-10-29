@@ -147,7 +147,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${darkMode ? "bg-[#a690590d]" : "bg-[#fcfbf8]"}`>
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
