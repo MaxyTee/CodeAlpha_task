@@ -385,7 +385,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                   </div>
 
                   <div className="flex justify-between">
-                    <span className={` ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Tax</span>
+                    <span className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>Tax</span>
                     <span className="font-medium">${tax.toFixed(2)}</span>
                   </div>
 
@@ -406,10 +406,10 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                       Total
                     </span>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className={`text-2xl font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
                         ${total.toLocaleString()}
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm `${darkMode ? "text-gray-300" : "text-gray-600"}`}>
                         or 4 interest-free payments of ${(total / 4).toFixed(2)}
                       </p>
                     </div>
@@ -444,7 +444,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                         <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                           <Icon className="text-[#a69059]" size={18} />
                         </div>
-                        <p className="text-sm text-gray-700">{feature.text}</p>
+                        <p className={`text-sm  ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{feature.text}</p>
                       </div>
                     );
                   })}
@@ -453,7 +453,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
               {/* Promo Code */}
              <div className={`rounded-2xl p-6 ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}>
-                <h3 className="font-semibold text-gray-900 mb-4">Promo Code</h3>
+                <h3 className={`font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>Promo Code</h3>
                 <div className="flex gap-2">
                   <input
                     type="text"
