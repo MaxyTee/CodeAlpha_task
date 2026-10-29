@@ -360,21 +360,21 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
             <div className="sticky top-8 space-y-6">
               {/* Order Summary Card */}
              <div className={`rounded-2xl p-6 ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}>
-                <h2 className="text-xl font-bold text-gray-900 mb-6">
+                <h2 className={`text-xl font-bold mb-6 ${darkMode ? "text-white" : "text-gray-900"}`}>
                   Order Summary
                 </h2>
 
                 {/* Price Breakdown */}
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal</span>
+                    <span className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>Subtotal</span>
                     <span className="font-medium">
                       ${subtotal.toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>Shipping</span>
                     <span
                       className={`font-medium ${
                         shipping === 0 ? "text-green-600" : ""
@@ -385,7 +385,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tax</span>
+                    <span className={` ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Tax</span>
                     <span className="font-medium">${tax.toFixed(2)}</span>
                   </div>
 
@@ -402,7 +402,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                 {/* Total */}
                 <div className="border-t border-gray-200 pt-4 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold text-gray-900">
+                    <span className={`text-lg font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
                       Total
                     </span>
                     <div className="text-right">
