@@ -146,6 +146,8 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
     { icon: RotateCcw, text: "30-Day Easy Returns & Exchanges" },
   ];
 
+  console.log("CartPage darkMode:", darkMode);
+
   return (
    <div className={`min-h-screen ${darkMode ? "bg-[#1f1f1f] text-white" : "bg-[#fcfbf8] text-gray-900"}`}>
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
