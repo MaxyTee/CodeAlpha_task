@@ -41,6 +41,8 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
   const [wishlist, setWishlist] = useState([]);
 
+    console.log("CartPage darkMode:", darkMode);
+
   useEffect(() => {
     const FetchCart = async () => {
       try {
@@ -94,7 +96,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
   const addresses = user.addresses;
   console.log("Selected Address", selectedAddress);
-  console.log("CartPage darkMode:", darkMode);
+
 
   // Payment options
   const payments = [
