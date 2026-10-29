@@ -204,11 +204,11 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                           )}
                         </div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        <h3 className={`text-lg font-semibold mb-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
                           {item.product.name}
                         </h3>
-
-                        <p className="text-gray-600 text-sm mb-3">
+                        
+                        <p className={`text-sm mb-3 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
                           {item.product.description}
                         </p>
 
@@ -335,13 +335,15 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
                   <ShoppingBag className="text-gray-400" size={32} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  Your bag is empty
+
+                <h3 className={`text-xl font-semibold mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>
+                   Your bag is empty
                 </h3>
-                <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  Add exquisite jewelry pieces to your bag and they'll appear
+                <p className={`mb-8 max-w-md mx-auto ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                   Add exquisite jewelry pieces to your bag and they'll appear
                   here
                 </p>
+                
                 <button
                   onClick={() => navigate("/allProductPage")}
                   className="inline-flex items-center gap-2 bg-[#a69059] text-white px-6 py-3 rounded-xl hover:bg-[#a69059]/90 transition-colors"
@@ -429,9 +431,11 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
               {/* Features */}
               <div className={`rounded-2xl ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"} p-6`}>
-                <h3 className="font-semibold text-gray-900 mb-4">
-                  Why Shop With LUXE
+
+                  <h3 className={`font-semibold mb-3 ${darkMode ? "text-white" : "text-gray-900"}`}>
+                   Why Shop With LUXE
                 </h3>
+                
                 <div className="space-y-4">
                   {features.map((feature, index) => {
                     const Icon = feature.icon;
