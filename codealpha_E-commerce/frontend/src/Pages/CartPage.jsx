@@ -428,7 +428,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
               </div>
 
               {/* Features */}
-              <div className="bg-white rounded-2xl p-6">
+              <div className={`rounded-2xl ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"} p-6`}>
                 <h3 className="font-semibold text-gray-900 mb-4">
                   Why Shop With LUXE
                 </h3>
