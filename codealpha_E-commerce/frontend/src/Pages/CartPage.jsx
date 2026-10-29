@@ -94,6 +94,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
   const addresses = user.addresses;
   console.log("Selected Address", selectedAddress);
+  console.log("CartPage darkMode:", darkMode);
 
   // Payment options
   const payments = [
@@ -146,7 +147,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
     { icon: RotateCcw, text: "30-Day Easy Returns & Exchanges" },
   ];
 
-  console.log("CartPage darkMode:", darkMode);
+  
 
   return (
    <div className={`min-h-screen ${darkMode ? "bg-[#1f1f1f] text-white" : "bg-[#fcfbf8] text-gray-900"}`}>
