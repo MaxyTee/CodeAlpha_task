@@ -166,7 +166,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
             {cart.map((item) => (
               <div
                 key={item.product._id}
-                className="bg-white rounded-2xl p-6 hover:shadow-xl transition-shadow"
+                className={`rounded-2xl p-6 hover:shadow-xl transition-shadow ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}
               >
                 <div className="flex flex-col sm:flex-row gap-6">
                   {/* Product Image */}
@@ -326,7 +326,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
 
             {/* Empty Cart */}
             {cart.length === 0 && (
-              <div className="bg-white rounded-2xl p-12 text-center">
+              <div  className={`rounded-2xl p-6 text-center ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}>
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
                   <ShoppingBag className="text-gray-400" size={32} />
                 </div>
@@ -352,7 +352,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* Order Summary Card */}
-              <div className="bg-white rounded-2xl p-6">
+             <div className={`rounded-2xl p-6 ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}>
                 <h2 className="text-xl font-bold text-gray-900 mb-6">
                   Order Summary
                 </h2>
@@ -443,7 +443,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
               </div>
 
               {/* Promo Code */}
-              <div className="bg-white rounded-2xl p-6">
+             <div className={`rounded-2xl p-6 ${darkMode ? "bg-[#2a2a2a] text-white" : "bg-white text-gray-900"}`}>
                 <h3 className="font-semibold text-gray-900 mb-4">Promo Code</h3>
                 <div className="flex gap-2">
                   <input
