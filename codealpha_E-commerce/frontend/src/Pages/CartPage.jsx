@@ -409,7 +409,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                       <div className={`text-2xl font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
                         ${total.toLocaleString()}
                       </div>
-                      <p className={`text-sm `${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                      <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
                         or 4 interest-free payments of ${(total / 4).toFixed(2)}
                       </p>
                     </div>
