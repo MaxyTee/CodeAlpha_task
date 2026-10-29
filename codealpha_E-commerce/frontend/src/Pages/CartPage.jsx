@@ -152,7 +152,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 mt-16">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className={`text-3xl ${darkMode ? "text-[#e5e5e5]" : "text-[#2a2a2a]"} font-bold`}>
             Your Shopping Bag
           </h1>
           <p className="text-gray-600 mt-2">
