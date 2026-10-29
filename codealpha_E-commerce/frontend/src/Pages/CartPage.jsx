@@ -160,7 +160,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
           <h1 className={`text-3xl ${darkMode ? "text-[#e5e5e5]" : "text-[#2a2a2a]"} font-bold`}>
             Your Shopping Bag
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className={`mt-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
             {cart.length} exquisite jewelry pieces
           </p>
         </div>
@@ -306,7 +306,7 @@ const CartPage = ({ darkMode, toggleDarkMode }) => {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500">
+                          <p className={`text-sm  ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
                             ${item.product.price} each
                           </p>
                         </div>
