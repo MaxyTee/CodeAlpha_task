@@ -411,10 +411,10 @@ const LoginPage = () => {
         </form>
 
         {!isAdminLogin && (
-          <div className="flex mt-6 items-center gap-2 align-center">
+          <div className="flex mt-6 items-center gap-1 align-center">
             <p
               style={{
-                fontSize: "0.875rem",
+                fontSize: "0.775rem",
                 color: "#666",
                 marginBottom: "8px",
               }}
@@ -427,7 +427,7 @@ const LoginPage = () => {
               style={{
                 background: "none",
                 border: "none",
-                fontSize: "0.875rem",
+                fontSize: "0.775rem",
                 color: "#a69059",
                 cursor: "pointer",
                 fontWeight: 600,
