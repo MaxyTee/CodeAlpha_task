@@ -41,7 +41,7 @@ const AboutPage = ({ darkMode, toggleDarkMode }) => {
               Our Beginning
             </h2>
             <p className="text-[#7c786e] leading-relaxed">
-              Founded in a small Parisian atelier in 1995, Luxe began as a
+              Founded in a small Parisian atelier in 1995, Maxy began as a
               passion project between two friends who shared a love for
               traditional craftsmanship and contemporary design. What started
               with simple silver rings has grown into a collection of exquisite
