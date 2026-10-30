@@ -416,7 +416,6 @@ const LoginPage = () => {
               style={{
                 fontSize: "0.775rem",
                 color: "#666",
-                marginBottom: "8px",
               }}
             >
               Don't have an account?
