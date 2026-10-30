@@ -45,7 +45,7 @@ const Footer = ({ darkMode }) => {
               color: darkMode ? "#fff" : "#161513",
             }}
           >
-            LUXE
+            Maxy
           </h2>
           <p
             style={{
@@ -54,7 +54,7 @@ const Footer = ({ darkMode }) => {
               marginTop: "8px",
             }}
           >
-            © 2024 LUXE Fine Jewelry. All rights reserved.
+            © 2024 MAXY Fine Jewelry. All rights reserved.
           </p>
         </div>
 
