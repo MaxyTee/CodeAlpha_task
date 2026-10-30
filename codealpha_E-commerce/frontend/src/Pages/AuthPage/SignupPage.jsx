@@ -58,8 +58,8 @@ const SignupPage = () => {
     };
     console.log(payload);
     try {
-      await signup(payload);
-      console.log("Loginn")
+      const sign = await signup(payload);
+      console.log(sign)
       navigate("/login")
       setIsLoading(false);
     } catch (error) {
