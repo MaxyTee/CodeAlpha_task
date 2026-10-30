@@ -90,7 +90,7 @@ const LoginPage = () => {
                 color: "#161513",
               }}
             >
-              LUXE
+              MAXY
             </h1>
           </div>
           <p
@@ -221,7 +221,7 @@ const LoginPage = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={isAdminLogin ? "admin@luxe.com" : "your@email.com"}
+                placeholder={isAdminLogin ? "admin@MAXY.com" : "your@email.com"}
                 required
                 style={{
                   width: "100%",
@@ -411,7 +411,7 @@ const LoginPage = () => {
         </form>
 
         {!isAdminLogin && (
-          <div className="flex mt-6 items-center gap-1 justify-center">
+          <div className="flex mt-6 items-center gap-2 align-center">
             <p
               style={{
                 fontSize: "0.875rem",
@@ -435,7 +435,7 @@ const LoginPage = () => {
                 padding: 0,
               }}
             >
-              Create your LUXE account
+              Create your MAXY account
             </button>
           </div>
         )}
@@ -446,7 +446,7 @@ const LoginPage = () => {
             <p style={{ fontSize: "0.75rem", color: "#999" }}>
               <strong>Default Admin Credentials:</strong>
               <br />
-              Email: admin@luxe.com
+              Email: admin@MAXY.com
               <br />
               Password: admin123
             </p>
