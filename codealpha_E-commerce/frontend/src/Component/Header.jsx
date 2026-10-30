@@ -103,7 +103,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 color: darkMode ? "#ffffff" : "#161513",
               }}
             >
-              Maxy Collection
+              Maxy
             </h1>
             <span
               style={{
