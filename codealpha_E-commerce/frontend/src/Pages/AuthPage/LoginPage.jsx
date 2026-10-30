@@ -411,7 +411,7 @@ const LoginPage = () => {
         </form>
 
         {!isAdminLogin && (
-          <div className="flex mt-6 items-center gap-1 align-center">
+          <div className="flex mt-6 items-center justify-center gap-1">
             <p
               style={{
                 fontSize: "0.775rem",
@@ -435,7 +435,7 @@ const LoginPage = () => {
                 padding: 0,
               }}
             >
-              Create your MAXY account
+              Create your account
             </button>
           </div>
         )}
