@@ -34,13 +34,16 @@ export const useAuthStore = create((set) => ({
       toast.success(response.data.message);
       return { success: true };
     } catch (error) {
-      console.log("Error message", error);
+     const message =error?.response?.data?.message || "Error Creating Account";
+      console.log("Signup error:", error);
       set({
-        signupError: error?.response?.data.message || "Error Creating Account",
+        signupError: message,
         isLoading: false,
         isAuthenticated: false,
       });
-      return { success: true };
+      
+      toast.error(message);
+      return { success: false };
     }
   },
 
@@ -63,12 +66,15 @@ export const useAuthStore = create((set) => ({
       toast.success(response.data.message);
       return { success: true };
     } catch (error) {
+      const message =error?.response?.data?.message || "Error Creating Account";
       console.log(error?.message);
       set({
         isLoading: false,
-        loginError: error?.response?.data?.message,
+        loginError: message,
         isAuthenticated: false,
       });
+
+      toast.error(message)
     }
   },
   userAddress: async (payload) => {
